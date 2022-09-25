@@ -21,11 +21,11 @@ def poll_movies_by_page(func):
     return wrapper
 
 
-class TheMovieDBClient(BaseClient, ABC):
+class TheMovieDBBaseClient(BaseClient, ABC):
     BASE_URL = os.getenv('MOVIE_API_BASE_URL')
 
     def __init__(self, token=None, base_url=None, verify=True):
-        super(TheMovieDBClient, self).__init__(
+        super(TheMovieDBBaseClient, self).__init__(
             token=token or os.getenv('MOVIES_API_TOKEN'), base_url=base_url or self.BASE_URL, verify=verify
         )
 
