@@ -2,8 +2,8 @@ import logging
 from collections import OrderedDict
 from typing import List
 
-from mr_knowledge_bot.telegram_click.argument import Argument
-from mr_knowledge_bot.telegram_click.const import *
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument
+from mr_knowledge_bot.bot.telegram.telegram_click.const import *
 
 LOGGER = logging.getLogger(__name__)
 

@@ -4,14 +4,14 @@ from typing import List
 
 from telegram import Update
 from telegram.ext import CallbackContext
-from mr_knowledge_bot.telegram_click import CommandTarget
-from mr_knowledge_bot.telegram_click.argument import Argument
-from mr_knowledge_bot.telegram_click.const import *
-from mr_knowledge_bot.telegram_click.error_handler import ErrorHandler, DEFAULT_ERROR_HANDLER
-from mr_knowledge_bot.telegram_click.help import generate_help_message
-from mr_knowledge_bot.telegram_click.parser import parse_telegram_command, split_command_from_args, split_command_from_target
-from mr_knowledge_bot.telegram_click.permission.base import Permission
-from mr_knowledge_bot.telegram_click.util import find_first, find_duplicates
+from mr_knowledge_bot.bot.telegram.telegram_click import CommandTarget
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument
+from mr_knowledge_bot.bot.telegram.telegram_click.const import *
+from mr_knowledge_bot.bot.telegram.telegram_click.error_handler import ErrorHandler, DEFAULT_ERROR_HANDLER
+from mr_knowledge_bot.bot.telegram.telegram_click.help import generate_help_message
+from mr_knowledge_bot.bot.telegram.telegram_click.parser import parse_telegram_command, split_command_from_args, split_command_from_target
+from mr_knowledge_bot.bot.telegram.telegram_click.permission.base import Permission
+from mr_knowledge_bot.bot.telegram.telegram_click.util import find_first, find_duplicates
 
 LOGGER = logging.getLogger(__name__)
 
@@ -121,7 +121,7 @@ def check_command_name_clashes(names: List[str]):
     Checks if a command name has been used multiple times and raises an exception if so
     :param names: command names added in this decorator call
     """
-    from mr_knowledge_bot.telegram_click import COMMAND_LIST
+    from mr_knowledge_bot.bot.telegram.telegram_click import COMMAND_LIST
 
     t = []
     t.extend(map(lambda x: x["names"], COMMAND_LIST))
@@ -176,7 +176,7 @@ def command(name: str or [str], description: str = None,
     :param command_target: command targets to accept
     :param error_handler: a customized error handler
     """
-    from mr_knowledge_bot.telegram_click import COMMAND_LIST
+    from mr_knowledge_bot.bot.telegram.telegram_click import COMMAND_LIST
 
     name = [name] if not isinstance(name, list) else name
     if arguments is None:

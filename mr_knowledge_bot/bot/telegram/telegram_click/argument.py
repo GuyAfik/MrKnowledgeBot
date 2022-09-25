@@ -1,7 +1,7 @@
 import logging
 
-from mr_knowledge_bot.telegram_click.const import ARG_VALUE_SEPARATOR_CHAR
-from mr_knowledge_bot.telegram_click.util import find_duplicates
+from mr_knowledge_bot.bot.telegram.telegram_click.const import ARG_VALUE_SEPARATOR_CHAR
+from mr_knowledge_bot.bot.telegram.telegram_click.util import find_duplicates
 
 LOGGER = logging.getLogger(__name__)
 
