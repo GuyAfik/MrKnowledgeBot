@@ -3,7 +3,7 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from mr_knowledge_bot.telegram_click.const import *
+from mr_knowledge_bot.bot.telegram.telegram_click.const import *
 
 LOGGER = logging.getLogger(__name__)
 

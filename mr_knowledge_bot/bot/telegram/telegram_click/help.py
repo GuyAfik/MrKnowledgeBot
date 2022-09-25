@@ -1,8 +1,8 @@
 from typing import List
 
-from mr_knowledge_bot.telegram_click.argument import Argument
-from mr_knowledge_bot.telegram_click.const import ARG_NAMING_PREFIXES
-from mr_knowledge_bot.telegram_click.util import escape_for_markdown
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument
+from mr_knowledge_bot.bot.telegram.telegram_click.const import ARG_NAMING_PREFIXES
+from mr_knowledge_bot.bot.telegram.telegram_click.util import escape_for_markdown
 
 
 def generate_help_message(names: [str], description: str, args: List[Argument]) -> str:
