@@ -5,6 +5,8 @@ from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMo
 
 class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
 
+    @poll_movies_by_page
+    @parse_http_response(response_type='json')
     def search(self, **kwargs):
         """
         Searches for movies with a specific name.
@@ -17,10 +19,7 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
             params = {'query': movie_name}
             if page := kwargs.get('page'):
                 params['page'] = page
-            return self.get(
-                url='/search/the_movie_db',
-                params=params
-            )
+            return self.get(url='/search/movie', params=params)
         raise ValueError(f'The "movie_name" argument must be provided')
 
     def discover(self, **kwargs):
@@ -30,4 +29,4 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
         return self.get(url='/discover/the_movie_db', params=kwargs)
 
     def get_genres(self):
-        return self.get(url='/genre/the_movie_db/list')
+        return self.get(url='/genre/movie/list')
