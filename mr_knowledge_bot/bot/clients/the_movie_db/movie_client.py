@@ -1,9 +1,9 @@
 from abc import ABC
 from mr_knowledge_bot.bot.clients.base_client import parse_http_response
-from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBClient, poll_movies_by_page
+from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBBaseClient, poll_movies_by_page
 
 
-class MovieClient(TheMovieDBClient, ABC):
+class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
 
     def search(self, **kwargs):
         """
