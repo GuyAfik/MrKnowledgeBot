@@ -23,26 +23,32 @@ def generate_help_message(names: [str], description: str, args: List[Argument]) 
     arguments_description = generate_arguments_description(arguments)
 
     lines = [
-        synopsis,
-        "  " + description
+        'Usage:',
+        synopsis
     ]
+
+    lines.extend([
+        '\nDescription:',
+        description
+    ])
+
     if len(flags) > 0:
         lines.extend([
-            "Flags:",
+            "\nFlags:",
             flags_description
         ])
 
     if len(arguments) > 0:
         lines.extend([
-            "Arguments:",
+            "\nArguments:",
             arguments_description
         ])
 
     if len(arguments) > 0 or len(flags) > 0:
         example = generate_command_example(names, arguments, flags)
         lines.extend([
-            "Example:",
-            "  " + example
+            "\nExamples:",
+            example
         ])
 
     return "\n".join(lines)
@@ -55,7 +61,7 @@ def generate_synopsis(names: [str], args: List[Argument]) -> str:
     :param args: arguments
     :return:
     """
-    command_names = list(map(lambda x: "/{}".format(escape_for_markdown(x)), names))
+    command_names = list(map(lambda x: f"/{escape_for_markdown(x)}", names))
     synopsis = command_names[0]
     # append command name aliases in round brackets
     if len(command_names) > 1:
@@ -87,15 +93,15 @@ def generate_argument_description(arg: Argument) -> str:
     :return: usage text line
     """
     arg_prefix = next(iter(ARG_NAMING_PREFIXES))
-    arg_names = list(map(lambda x: "`{}{}`".format(arg_prefix, x), arg.names))
+    arg_names = list(map(lambda x: f"`{arg_prefix}{x}`", arg.names))
 
     message = "  " + ", ".join(arg_names)
     if not arg.flag:
-        message += "\t\t`{}`".format(arg.type.__name__.upper())
-    message += "\t\t" + escape_for_markdown(arg.description)
+        message += f"\t\t`{arg.type.__name__.upper()}`"
+    message += f"\t\t{escape_for_markdown(arg.description)}"
 
     if arg.optional and not arg.flag:
-        message += "\t(`{}`)".format(escape_for_markdown(arg.default))
+        message += f'\t(default=`{escape_for_markdown(arg.default)}`)'
     return message
 
 
@@ -110,4 +116,9 @@ def generate_command_example(names: List[str], arguments: List[Argument], flags:
     arg_prefix = next(iter(ARG_NAMING_PREFIXES))
     argument_examples = list(map(lambda x: "{}".format(x.example), arguments))
     flag_examples = list(map(lambda x: "{}{}".format(arg_prefix, x.name), flags))
-    return "`/{} {}`".format(names[0], " ".join(flag_examples + argument_examples)).strip()
+    return '\n'.join(
+        [f'{num + 1}) `{"/" + names[0] + " " + argument_examples[num]}`'.strip()
+         for num in range(len(argument_examples))]
+    )
+
+    # return "`/{} {}`".format(names[0], " ".join(flag_examples + argument_examples)).strip()

@@ -40,7 +40,7 @@ class TelegramBot(BaseBot, ABC):
                 validator=lambda x: x.strip(),
                 optional=False,
                 type=str,
-                example='/find_movies_by_name -n "game of thrones"'
+                example='-n "game of thrones"'
             ),
             Argument(
                 name=['limit', 'l'],
@@ -48,7 +48,7 @@ class TelegramBot(BaseBot, ABC):
                 validator=lambda x: 50 >= x > 0,
                 optional=True,
                 type=int,
-                example='/find_movies_by_name -n "game of thrones" -l "20"',
+                example='-n "game of thrones" -l "20"',
                 default=20,
             ),
             Argument(
@@ -57,7 +57,7 @@ class TelegramBot(BaseBot, ABC):
                 validator=lambda x: x in ('popularity', 'release_date', 'rating'),
                 optional=True,
                 type=str,
-                example='/find_movies_by_name -n "game of thrones" -l "20" -s "release_date"',
+                example='-n "game of thrones" -l "20" -s "release_date"',
                 default='popularity',
             ),
         ]

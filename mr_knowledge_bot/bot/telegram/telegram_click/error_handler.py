@@ -77,11 +77,8 @@ class DefaultErrorHandler(ErrorHandler):
         message = update.effective_message
         chat_id = message.chat_id
 
-        denied_text = "\n".join([
-            ":exclamation: `{}`".format(str(exception)),
-            "",
-            help_message
-        ])
+        denied_text = '\n'.join([f'Error: {exception}', '', help_message])
+
         send_message(bot, chat_id=chat_id,
                      message=denied_text,
                      parse_mode=ParseMode.MARKDOWN,
