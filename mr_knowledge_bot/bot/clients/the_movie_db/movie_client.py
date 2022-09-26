@@ -6,7 +6,7 @@ from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMo
 class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
 
     @poll_movies_by_page
-    @parse_http_response(response_type='json')
+    @parse_http_response()
     def search(self, **kwargs):
         """
         Searches for movies with a specific name.
@@ -20,7 +20,7 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
             if page := kwargs.get('page'):
                 params['page'] = page
             return self.get(url='/search/movie', params=params)
-        raise ValueError(f'The "movie_name" argument must be provided')
+        raise ValueError('The "movie_name" argument must be provided')
 
     def discover(self, **kwargs):
         """
