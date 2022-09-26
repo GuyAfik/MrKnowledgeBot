@@ -37,14 +37,14 @@ class TelegramBot(BaseBot, ABC):
         self._updater.idle()
 
     def _unknown_command(self, update: Update, context: CallbackContext):
-        self.get_available_commands(update, context)
+        self.send_available_commands(update, context)
 
     @command(name=['help', 'h'], description='List the commands supported by the MrKnowledgeBot')
     def help_command(self, update: Update, context: CallbackContext):
-        self.get_available_commands(update, context)
+        self.send_available_commands(update, context)
 
     @staticmethod
-    def get_available_commands(update: Update, context: CallbackContext):
+    def send_available_commands(update: Update, context: CallbackContext):
         bot = context.bot
         chat_id = update.effective_message.chat_id
 
@@ -142,3 +142,9 @@ class TelegramBot(BaseBot, ABC):
             text = f'Could not find any tv-shows similar to the name "{name}" 😞'
 
         context.bot.send_message(chat_id, text=text)
+
+    def discover_movies_command(self, update: Update, context: CallbackContext):
+        pass
+
+    def discover_tv_shows_command(self, update: Update, context: CallbackContext):
+        pass

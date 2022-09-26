@@ -1,6 +1,6 @@
 from mr_knowledge_bot.bot.clients import TVShowsClient
 from abc import ABC
-from mr_knowledge_bot.bot.logic.the_movie_db.base_movie_db_logic import TheMovieDBBaseLogic
+from mr_knowledge_bot.bot.logic.movies.the_movie_db.base_movie_db_logic import TheMovieDBBaseLogic
 
 
 class TheMovieDBTVShowLogic(TheMovieDBBaseLogic, ABC):
