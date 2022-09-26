@@ -5,7 +5,7 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler, CallbackContext
 from telegram import Update
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
-from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection
 from mr_knowledge_bot.bot.logic import MovieLogic
 
 
@@ -32,11 +32,11 @@ class TelegramBot(BaseBot, ABC):
 
     @command(
         name='find_movies_by_name',
-        description='Enables you to find movies by name',
+        description='Allows you to find movies by name.',
         arguments=[
             Argument(
                 name=['name', 'n'],
-                description='The movie name to search for (can be substrings)',
+                description='The movie name to search for (can be substrings or partial movie names)',
                 validator=lambda x: x.strip(),
                 optional=False,
                 type=str,
@@ -51,14 +51,14 @@ class TelegramBot(BaseBot, ABC):
                 example='-n "game of thrones" -l "20"',
                 default=20,
             ),
-            Argument(
-                name=['sort_by', 's'],
-                description='Sort by one of the following: popularity/release_date/rating',
-                validator=lambda x: x in ('popularity', 'release_date', 'rating'),
+            Selection(
+                name=['sort-by', 's'],
+                description='Sort by one of the following: popularity/release_date/rating.',
                 optional=True,
                 type=str,
-                example='-n "game of thrones" -l "20" -s "release_date"',
+                example='-n "game of thrones" -l "10" -s "release_date"',
                 default='popularity',
+                allowed_values=['popularity', 'release_date', 'rating']
             ),
         ]
     )

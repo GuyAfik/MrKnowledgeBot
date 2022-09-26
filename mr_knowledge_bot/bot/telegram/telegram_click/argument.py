@@ -135,7 +135,7 @@ class Selection(Argument):
     Convenience class for a command argument based on a predefined selection of allowed values
     """
 
-    def __init__(self, name: str, description: str, allowed_values: [any], type: type = str, converter: callable = None,
+    def __init__(self, name: str, description: str, example: str, allowed_values: [any], type: type = str, converter: callable = None,
                  optional: bool = None, default: any = None):
         """
         Constructor
@@ -152,5 +152,5 @@ class Selection(Argument):
         def validator(x):
             return x in self.allowed_values
 
-        super().__init__(name, description, example=allowed_values[0], type=type, converter=converter,
+        super().__init__(name, description, example=example, type=type, converter=converter,
                          optional=optional, default=default, validator=validator)
