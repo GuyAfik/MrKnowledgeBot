@@ -15,7 +15,7 @@ class ApiResponse(SimpleNamespace):
     pass
 
 
-def parse_http_response(expected_valid_code: int = 200, response_type: str = 'class'):
+def parse_http_response(expected_valid_code: int = 200, response_type: str = 'json'):
     """
     Parses the http response.
 
