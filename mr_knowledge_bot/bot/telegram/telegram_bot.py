@@ -1,12 +1,12 @@
 
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
-from telegram.ext import Updater
-from telegram.ext import CommandHandler, CallbackContext
-from telegram import Update
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters
+from telegram import Update, ParseMode
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection
 from mr_knowledge_bot.bot.logic import MovieLogic, TVShowLogic
+from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
 
 
 class TelegramBot(BaseBot, ABC):
@@ -21,6 +21,10 @@ class TelegramBot(BaseBot, ABC):
             1: [
                 CommandHandler(command='find_movies_by_name', callback=self.find_movies_by_name_command),
                 CommandHandler(command='find_tv_shows_by_name', callback=self.find_tv_shows_by_name_command)
+            ],
+            2: [
+                CommandHandler(command='help', callback=self.help_command),
+                MessageHandler(Filters.command | Filters.text, callback=self._unknown_command)
             ]
         }
 
@@ -31,6 +35,21 @@ class TelegramBot(BaseBot, ABC):
     def start(self):
         self._updater.start_polling()
         self._updater.idle()
+
+    def _unknown_command(self, update: Update, context: CallbackContext):
+        self.get_available_commands(update, context)
+
+    @command(name=['help', 'h'], description='List the commands supported by the MrKnowledgeBot')
+    def help_command(self, update: Update, context: CallbackContext):
+        self.get_available_commands(update, context)
+
+    @staticmethod
+    def get_available_commands(update: Update, context: CallbackContext):
+        bot = context.bot
+        chat_id = update.effective_message.chat_id
+
+        text = generate_command_list(update, context)
+        bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
     @command(
         name='find_movies_by_name',
