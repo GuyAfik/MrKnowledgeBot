@@ -1,10 +1,9 @@
-import dateparser, datetime
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters
 from telegram import Update, ParseMode
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
-from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
 from mr_knowledge_bot.bot.logic import MovieLogic, TVShowLogic
 from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
 
@@ -212,13 +211,9 @@ class TelegramBot(BaseBot, ABC):
                 type=int,
                 example='-ar "120"',
             ),
-            Argument(
-                name=['not_released ', 'nr'],
-                description='Bring movies that were still not released.',
-                optional=True,
-                example='-or',
-                flag=True,
-                default=False
+            Flag(
+                name=['not_released', 'nr'],
+                description='Bring movies that were still not released.'
             ),
         ]
     )

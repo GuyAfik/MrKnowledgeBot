@@ -114,11 +114,12 @@ def generate_command_example(names: List[str], arguments: List[Argument], flags:
     :return: example call
     """
     arg_prefix = next(iter(ARG_NAMING_PREFIXES))
-    argument_examples = list(map(lambda x: "{}".format(x.example), arguments))
-    flag_examples = list(map(lambda x: "{}{}".format(arg_prefix, x.name), flags))
-    return '\n'.join(
-        [f'{num + 1}) `{"/" + names[0] + " " + argument_examples[num]}`'.strip()
-         for num in range(len(argument_examples))]
-    )
+    argument_examples = list(map(lambda x: f"{x.example}", arguments))
+    flag_examples = list(map(lambda x: f"{arg_prefix}{x.name}", flags))
 
-    # return "`/{} {}`".format(names[0], " ".join(flag_examples + argument_examples)).strip()
+    examples = argument_examples + flag_examples
+
+    return '\n'.join(
+        [f'{num + 1}) `{"/" + names[0] + " " + examples[num]}`'.strip()
+         for num in range(len(examples))]
+    )
