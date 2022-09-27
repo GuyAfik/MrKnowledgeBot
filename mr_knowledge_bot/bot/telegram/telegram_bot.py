@@ -247,7 +247,7 @@ class TelegramBot(BaseBot, ABC):
         )
 
         if movie_names:
-            text = f'Found the following tv-shows for you 😀\n\n{movie_names}'
+            text = f'Found the following movies for you 😀\n\n{movie_names}'
         else:
             text = f'Could not find any movies for you 😞'
 
