@@ -12,18 +12,17 @@ def poll_by_page_and_limit(limit=500):
     """
     def decorator(func):
         def wrapper(self, *args, **kwargs):
-            page = 1
-            all_movies = []
+            objects, page = [], 1
             kwargs['page'] = page
-            current_movies_by_page = func(self, *args, **kwargs).get('results') or []
-            while current_movies_by_page:
+
+            while current_objects_by_page := func(self, *args, **kwargs):
+                objects.extend(current_objects_by_page)
+                if len(objects) > limit:
+                    break
                 page += 1
                 kwargs['page'] = page
-                all_movies.extend(current_movies_by_page)
-                if len(all_movies) > limit:
-                    return all_movies[:limit]
-                current_movies_by_page = func(self, *args, **kwargs).get('results') or []
-            return all_movies
+            return objects[:limit]
+
         return wrapper
     return decorator
 

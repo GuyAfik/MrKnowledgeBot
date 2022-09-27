@@ -2,7 +2,10 @@ from abc import ABC, abstractmethod
 import logging
 from json.decoder import JSONDecodeError
 from types import SimpleNamespace
-
+from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import TheMovieDBTVShowEntity
+from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
+from mr_knowledge_bot.bot.entites.base_entity import BaseEntity
+from typing import Type, Optional
 
 logger = logging.getLogger('knowledge-bot')
 
@@ -15,17 +18,30 @@ class ApiResponse(SimpleNamespace):
     pass
 
 
-def parse_http_response(expected_valid_code: int = 200, response_type: str = 'json'):
+def response_to_tv_show_entities(response: dict):
+    results = response.get('results')
+    return [TheMovieDBTVShowEntity.from_response(result) for result in results]
+
+
+def response_to_movie_entities(response: dict):
+    results = response.get('results')
+    return [TheMovieDBMovieEntity.from_response(result) for result in results]
+
+
+def parse_http_response(
+    _class_type: Optional[Type[BaseEntity]] = None, expected_valid_code: int = 200, response_type: str = 'class'
+):
     """
     Parses the http response.
 
     Args:
+        _class_type (BaseEntity): an entity class to parse the response. (any class inherits from BaseEntity)
         expected_valid_code (int): the expected http status code of success.
         response_type (str): what kind of response type to parse to, either json/response/class.
 
     Raises:
         ValueError: in case the response type is not valid.
-        MovieClientApiError: in case the request didn't succeed.
+        ApiError: in case the request didn't succeed.
     """
 
     # class - return a class where the attributes are the json response (including nested fields).
@@ -37,6 +53,14 @@ def parse_http_response(expected_valid_code: int = 200, response_type: str = 'js
         raise ValueError(
             f'Invalid response type ({response_type}) - should be one of ({",".join(response_types)})'
         )
+
+    if response_type == 'class' and not _class_type:
+        raise ValueError('_class_type must be provided when "response_type" = class')
+
+    _class_type_to_entity = {
+        TheMovieDBTVShowEntity: response_to_tv_show_entities,
+        TheMovieDBMovieEntity: response_to_movie_entities
+    }
 
     def decorator(func):
         def wrapper(self, *args, **kwargs):
@@ -50,7 +74,7 @@ def parse_http_response(expected_valid_code: int = 200, response_type: str = 'js
                     raise ApiError(f'Error: ({http_response.text})')
                 raise ApiError(f'Error: ({response_as_json})')
             if response_type == 'class':
-                return http_response.json(object_hook=lambda response: ApiResponse(**response))
+                return _class_type_to_entity[_class_type](http_response.json())
             elif response_type == 'json':
                 return http_response.json()
             else:  # in case the entire response object is needed
