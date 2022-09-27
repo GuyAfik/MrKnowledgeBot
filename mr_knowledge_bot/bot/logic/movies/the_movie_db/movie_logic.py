@@ -1,4 +1,5 @@
 import dateparser
+from datetime import datetime
 from mr_knowledge_bot.bot.clients import MovieClient
 from mr_knowledge_bot.bot.logic.movies.the_movie_db.base_movie_db_logic import TheMovieDBBaseLogic
 from abc import ABC
@@ -26,13 +27,15 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
     def discover(
         self,
         limit=20,
+        page=1,
         sort_by=None,
         before_date=None,
         after_date=None,
         with_genres=None,
         without_genres=None,
         before_runtime=None,
-        after_runtime=None
+        after_runtime=None,
+        not_released=None
     ):
         """
         Find movies by filter parameters.
@@ -43,19 +46,25 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
                 if requested_genre.lower() == available_genre.get('name', '').lower()
             ]
 
-        filters = {}
+        filters = {"page": page}
         if sort_by:
+            if sort_by == 'popularity':
+                sort_by = 'popularity.desc'
+            elif sort_by == 'release_date':
+                sort_by = 'release_date.desc'
+            elif sort_by == 'rating':
+                sort_by = 'vote_average.desc'
             filters['sort_by'] = sort_by
 
         if before_date:
             if parsed_before_data := dateparser.parse(before_date):
                 # log out what the date is before and after parsing
-                filters['primary_release_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
+                filters['release_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
 
         if after_date:
-            if parsed_after_date := dateparser.parse(before_date):
+            if parsed_after_date := dateparser.parse(after_date):
                 # log out what the date is before and after parsing
-                filters['primary_release_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
+                filters['release_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
 
         if with_genres and (genre_ids := genre_names_to_ids(with_genres)):
             filters['with_genres'] = genre_ids
@@ -70,6 +79,8 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
             filters['with_runtime.gte'] = after_runtime
 
         movies = super().discover(**filters)
+        if not not_released:
+            movies = [movie for movie in movies if dateparser.parse(movie.get('release_date')) <= datetime.now()]
         if len(movies) > limit:
             movies = movies[:limit]
 
