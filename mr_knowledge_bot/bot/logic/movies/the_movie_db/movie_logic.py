@@ -59,12 +59,12 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
         if before_date:
             if parsed_before_data := dateparser.parse(before_date):
                 # log out what the date is before and after parsing
-                filters['release_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
+                filters['primary_release_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
 
         if after_date:
             if parsed_after_date := dateparser.parse(after_date):
                 # log out what the date is before and after parsing
-                filters['release_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
+                filters['primary_release_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
 
         if with_genres and (genre_ids := genre_names_to_ids(with_genres)):
             filters['with_genres'] = genre_ids
@@ -79,8 +79,11 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
             filters['with_runtime.gte'] = after_runtime
 
         movies = super().discover(**filters)
-        if not not_released:
-            movies = [movie for movie in movies if dateparser.parse(movie.get('release_date')) <= datetime.now()]
+        if not not_released:  # remove movies which were not released yet.
+            movies = [
+                movie for movie in movies if
+                dateparser.parse(movie.get('release_date')).strftime('%Y-%m-%d') < datetime.now().strftime('%Y-%m-%d')
+            ]
         if len(movies) > limit:
             movies = movies[:limit]
 
