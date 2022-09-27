@@ -24,7 +24,7 @@ class TelegramBot(BaseBot, ABC):
             ],
             2: [
                 CommandHandler(command='help', callback=self.help_command),
-                MessageHandler(Filters.command | Filters.text, callback=self._unknown_command)
+                MessageHandler(Filters.command, callback=self._unknown_command)
             ]
         }
 
