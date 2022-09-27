@@ -22,11 +22,14 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
             return self.get(url='/search/movie', params=params)
         raise ValueError('The "movie_name" argument must be provided')
 
+    @poll_movies_by_page
+    @parse_http_response()
     def discover(self, **kwargs):
         """
         need to add docstring with all query parameters.
         """
-        return self.get(url='/discover/the_movie_db', params=kwargs)
+        return self.get(url='/discover/movie', params=kwargs)
 
+    @parse_http_response()
     def get_genres(self):
         return self.get(url='/genre/movie/list')

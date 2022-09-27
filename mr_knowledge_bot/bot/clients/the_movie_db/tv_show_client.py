@@ -25,5 +25,6 @@ class TheMovieDBTVShowsClient(TheMovieDBBaseClient, ABC):
     def discover(self, **kwargs):
         pass
 
+    @parse_http_response()
     def get_genres(self):
-        pass
+        return self.get(url='/genre/tv/list')
