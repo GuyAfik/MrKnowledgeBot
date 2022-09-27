@@ -5,20 +5,27 @@ from mr_knowledge_bot.bot.clients.base_client import BaseClient
 from abc import ABC, abstractmethod
 
 
-def poll_movies_by_page(func):
-    def wrapper(self, *args, **kwargs):
-        page = 1
-        all_movies = []
-        kwargs['page'] = page
-        current_movies_by_page = func(self, *args, **kwargs).get('results') or []
-        while current_movies_by_page:
-            page += 1
+def poll_by_page_and_limit(limit=500):
+    """
+    Args:
+        limit (int): the maximum number of records to query from the api.
+    """
+    def decorator(func):
+        def wrapper(self, *args, **kwargs):
+            page = 1
+            all_movies = []
             kwargs['page'] = page
-            all_movies.extend(current_movies_by_page)
             current_movies_by_page = func(self, *args, **kwargs).get('results') or []
-        return all_movies
-
-    return wrapper
+            while current_movies_by_page:
+                page += 1
+                kwargs['page'] = page
+                all_movies.extend(current_movies_by_page)
+                if len(all_movies) > limit:
+                    return all_movies[:limit]
+                current_movies_by_page = func(self, *args, **kwargs).get('results') or []
+            return all_movies
+        return wrapper
+    return decorator
 
 
 class TheMovieDBBaseClient(BaseClient, ABC):

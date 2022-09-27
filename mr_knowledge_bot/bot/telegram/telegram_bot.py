@@ -25,7 +25,7 @@ class TelegramBot(BaseBot, ABC):
             ],
             2: [
                 CommandHandler(command='help', callback=self.help_command),
-                # MessageHandler(Filters.command | Filters.text, callback=self._unknown_command)
+                MessageHandler(Filters.command | Filters.text, callback=self._unknown_command)
             ]
         }
 
@@ -66,12 +66,12 @@ class TelegramBot(BaseBot, ABC):
             ),
             Argument(
                 name=['limit', 'l'],
-                description='The maximum amount of movies to return, maximum is 50.',
-                validator=lambda x: 50 >= x > 0,
+                description='The maximum amount of movies to return, maximum is 100.',
+                validator=lambda x: 100 >= x > 0,
                 optional=True,
                 type=int,
                 example='-n "game of thrones" -l "20"',
-                default=20,
+                default=50,
             ),
             Selection(
                 name=['sort-by', 's'],
@@ -112,12 +112,12 @@ class TelegramBot(BaseBot, ABC):
             ),
             Argument(
                 name=['limit', 'l'],
-                description='The maximum amount of tv-shows to return, maximum is 50.',
-                validator=lambda x: 50 >= x > 0,
+                description='The maximum amount of tv-shows to return, maximum is 100.',
+                validator=lambda x: 100 >= x > 0,
                 optional=True,
                 type=int,
                 example='-n "game of thrones" -l "20"',
-                default=20,
+                default=50,
             ),
             Selection(
                 name=['sort-by', 's'],
@@ -150,12 +150,12 @@ class TelegramBot(BaseBot, ABC):
         arguments=[
             Argument(
                 name=['limit', 'l'],
-                description='The maximum amount of tv-shows to return, maximum is 50.',
-                validator=lambda x: 50 >= x > 0,
+                description='The maximum amount of tv-shows to return, maximum is 100.',
+                validator=lambda x: 100 >= x > 0,
                 optional=True,
                 type=int,
-                example='-l "20"',
-                default=20,
+                example='-l "80"',
+                default=50,
             ),
             Selection(
                 name=['sort-by', 's'],
@@ -227,14 +227,14 @@ class TelegramBot(BaseBot, ABC):
         update: Update,
         context: CallbackContext,
         limit: int,
-        sort_by=None,
-        before_date=None,
-        after_date=None,
-        with_genres=None,
-        without_genres=None,
-        before_runtime=None,
-        after_runtime=None,
-        not_released=None
+        sort_by: str = None,
+        before_date: str = None,
+        after_date: str = None,
+        with_genres: str = None,
+        without_genres: str = None,
+        before_runtime: str = None,
+        after_runtime: str = None,
+        not_released: bool = None
     ):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')

@@ -1,11 +1,11 @@
 from abc import ABC
 from mr_knowledge_bot.bot.clients.base_client import parse_http_response
-from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBBaseClient, poll_movies_by_page
+from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBBaseClient, poll_by_page_and_limit
 
 
 class TheMovieDBTVShowsClient(TheMovieDBBaseClient, ABC):
 
-    @poll_movies_by_page
+    @poll_by_page_and_limit()
     @parse_http_response()
     def search(self, **kwargs):
         """
