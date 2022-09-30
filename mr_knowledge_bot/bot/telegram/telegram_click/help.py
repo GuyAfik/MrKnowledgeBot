@@ -14,6 +14,7 @@ def generate_help_message(names: [str], description: str, args: List[Argument]) 
     :return: help message
     """
     synopsis = generate_synopsis(names, args)
+    print(f'{synopsis=}')
 
     flags = list(filter(lambda x: x.flag, args))
     flags = sorted(flags, key=lambda x: x.name)
