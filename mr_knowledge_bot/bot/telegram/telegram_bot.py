@@ -191,17 +191,21 @@ class TelegramBot(BaseBot, ABC):
             ),
             Argument(
                 name=['with_genres', 'wg'],
-                description='Movies that are one of the genres that the get_movie_genres command returns',
+                description='Comma-separated list of movies genres to retrieve. '
+                            'Can be retrieved from the get_movies_genres command.',
                 optional=True,
-                type=str,
-                example='-wg "Science Fiction"',
+                type=list,
+                example='-wg "Science Fiction,Fantasy"',
+                converter=lambda genres: genres.split(',')
             ),
             Argument(
                 name=['without_genres', 'wog'],
-                description='Movies that are not one of the genres that the get_movie_genres command returns.',
+                description='Comma-separated list of movies genres to not retrieve. '
+                            'Can be retrieved from the get_movies_genres command.',
                 optional=True,
-                type=str,
-                example='-wog "Science Fiction"',
+                type=list,
+                example='-wog "Science Fiction,Fantasy"',
+                converter=lambda genres: genres.split(',')
             ),
             Argument(
                 name=['before_runtime', 'br'],
@@ -303,15 +307,17 @@ class TelegramBot(BaseBot, ABC):
                 name=['with_genres', 'wg'],
                 description='TV-shows that are one of the genres that the get_tv_shows_genres command returns',
                 optional=True,
-                type=str,
+                type=list,
                 example='-wg "Science Fiction"',
+                converter=lambda genres: genres.split(',')
             ),
             Argument(
                 name=['without_genres', 'wog'],
                 description='TV-shows that are not one of the genres that the get_tv_shows_genres returns.',
                 optional=True,
-                type=str,
+                type=list,
                 example='-wog "Science Fiction"',
+                converter=lambda genres: genres.split(',')
             ),
             Argument(
                 name=['before_runtime', 'br'],

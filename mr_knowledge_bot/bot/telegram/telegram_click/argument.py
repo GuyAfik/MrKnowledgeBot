@@ -70,6 +70,9 @@ class Argument:
                 raise ValueError("Missing required argument: '{}'".format(self.names[0]))
 
         parsed = self.converter(arg)
+        if type(parsed) != self.type:
+            raise ValueError(f"invalid value for argument '{self.names[0]}': {arg}")
+
         if self.validator is not None:
             if not self.validator(parsed):
                 raise ValueError("Invalid value for argument '{}': '{}'".format(self.names[0], arg))
