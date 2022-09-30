@@ -18,5 +18,5 @@ class TheMovieDBBaseEntity(BaseEntity, ABC):
         return self.__dict__
 
     def __str__(self):
-        return f'id={self.id}, name={self.name}, release_date={self.release_date}, genre_ids={self.genre_ids}, ' \
-               f'overview={self.overview}, popularity={self.popularity}, rating={self.rating}'
+        return ", ".join([f'{attr_name}={attr_value}' for attr_name, attr_value in self.to_dict().items()])
+
