@@ -1,6 +1,6 @@
 from typing import List
 
-from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection
 from mr_knowledge_bot.bot.telegram.telegram_click.const import ARG_NAMING_PREFIXES
 from mr_knowledge_bot.bot.telegram.telegram_click.util import escape_for_markdown
 
@@ -100,8 +100,12 @@ def generate_argument_description(arg: Argument) -> str:
         message += f"\t\t`{arg.type.__name__.upper()}`"
     message += f"\t\t{escape_for_markdown(arg.description)}"
 
-    if arg.optional and not arg.flag:
+    if arg.optional and not arg.flag and arg.default is not None:  # add default values if exist
         message += f'\t(default=`{escape_for_markdown(arg.default)}`)'
+
+    if isinstance(arg, Selection):  # add allowed values
+        message += f"\t(allowed-values={','.join([f'`{value}`' for value in arg.allowed_values])})"
+
     return message
 
 
