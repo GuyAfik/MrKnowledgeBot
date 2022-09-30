@@ -10,3 +10,7 @@ class BaseMoviesTVShowsLogic(ABC):
     @abstractmethod
     def discover(self, **kwargs):
         pass
+
+    @abstractmethod
+    def get_genres(self):
+        pass

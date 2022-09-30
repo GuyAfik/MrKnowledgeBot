@@ -14,6 +14,10 @@ class TheMovieDBBaseLogic(BaseMoviesTVShowsLogic, ABC):
     def discover(self, **kwargs):
         return self._client.discover(**kwargs)
 
+    def get_genres(self):
+        return '\n'.join(genre.name for genre in self.genres)
+
     def genre_names_to_ids(self, requested_genres):
         names_to_ids = {genre.name: genre.id for genre in self.genres}
         return [names_to_ids.get(genre) for genre in requested_genres if names_to_ids.get(genre)]
+
