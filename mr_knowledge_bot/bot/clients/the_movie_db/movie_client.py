@@ -9,7 +9,7 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
     movie_entity = TheMovieDBMovieEntity
 
     @poll_by_page_and_limit()
-    @parse_http_response(_class_type=movie_entity)
+    @parse_http_response(response_type='json', keys=['results'])
     def search(self, **kwargs):
         """
         Searches for movies with a specific name.

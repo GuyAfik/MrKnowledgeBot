@@ -5,7 +5,7 @@ from types import SimpleNamespace
 from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import TheMovieDBTVShowEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
 from mr_knowledge_bot.bot.entites.base_entity import BaseEntity
-from typing import Type, Optional
+from typing import Type, Optional, Any
 
 logger = logging.getLogger('knowledge-bot')
 
@@ -25,11 +25,30 @@ def response_to_tv_show_entities(response: dict):
 
 def response_to_movie_entities(response: dict):
     results = response.get('results')
+    print(results)
     return [TheMovieDBMovieEntity.from_response(result) for result in results]
 
 
+def dict_get_nested_fields(dictionary: dict, keys: Optional[list], default: Any = None):
+    if not keys:
+        return dictionary
+
+    result = dictionary
+
+    for key in keys:
+        try:
+            result = result[key]
+        except (KeyError, TypeError, IndexError, AttributeError):
+            result = default
+
+    return result
+
+
 def parse_http_response(
-    _class_type: Optional[Type[BaseEntity]] = None, expected_valid_code: int = 200, response_type: str = 'class'
+    _class_type: Optional[Type[BaseEntity]] = None,
+    expected_valid_code: int = 200,
+    response_type: str = 'class',
+    keys: Optional[list] = None
 ):
     """
     Parses the http response.
@@ -38,6 +57,8 @@ def parse_http_response(
         _class_type (BaseEntity): an entity class to parse the response. (any class inherits from BaseEntity)
         expected_valid_code (int): the expected http status code of success.
         response_type (str): what kind of response type to parse to, either json/response/class.
+        keys (list): a list of keys to get the response from, each value is for the next nested key in a dict,
+                if None will bring the entire response back.
 
     Raises:
         ValueError: in case the response type is not valid.
@@ -65,8 +86,9 @@ def parse_http_response(
     def decorator(func):
         def wrapper(self, *args, **kwargs):
             # response type will override the response of the class.
-            logger.debug(f'Sending HTTP request using function {func.__name__} with args: {args}, kwargs: {kwargs}')
+            logger.debug(f'Sending HTTP request using function {func.__name__} with {args=}, {kwargs=}')
             http_response = func(self, *args, **kwargs)
+
             if http_response.status_code != expected_valid_code:
                 try:
                     response_as_json = http_response.json()
@@ -76,7 +98,7 @@ def parse_http_response(
             if response_type == 'class':
                 return _class_type_to_entity[_class_type](http_response.json())
             elif response_type == 'json':
-                return http_response.json()
+                return dict_get_nested_fields(dictionary=http_response.json(), keys=keys)
             else:  # in case the entire response object is needed
                 return http_response
         return wrapper
