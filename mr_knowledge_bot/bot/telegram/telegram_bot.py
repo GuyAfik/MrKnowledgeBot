@@ -24,7 +24,7 @@ class TelegramBot(BaseBot, ABC):
             ],
             2: [
                 CommandHandler(command='help', callback=self.help_command),
-                # MessageHandler(Filters.command, callback=self._unknown_command)
+                MessageHandler(Filters.text & ~Filters.command, callback=self._unknown_command)
             ]
         }
 
@@ -48,7 +48,12 @@ class TelegramBot(BaseBot, ABC):
         bot = context.bot
         chat_id = update.effective_message.chat_id
 
-        text = generate_command_list(update, context)
+        user_info = update.message.from_user
+        first_name = user_info.first_name
+        last_name = user_info.last_name
+
+        text = f'Hello {first_name} {last_name}! Here are the available commands 😎' \
+               f'\n\n{generate_command_list(update, context)}'
         bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
     @command(
