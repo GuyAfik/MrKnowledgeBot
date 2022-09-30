@@ -21,7 +21,9 @@ class TelegramBot(BaseBot, ABC):
                 CommandHandler(command='find_movies_by_name', callback=self.find_movies_by_name_command),
                 CommandHandler(command='find_tv_shows_by_name', callback=self.find_tv_shows_by_name_command),
                 CommandHandler(command='discover_movies', callback=self.discover_movies_command),
-                CommandHandler(command='discover_tv_shows', callback=self.discover_tv_shows_command)
+                CommandHandler(command='discover_tv_shows', callback=self.discover_tv_shows_command),
+                CommandHandler(command='get_movie_genres', callback=self.get_movie_genres_command),
+                CommandHandler(command='get_tv_shows_genres', callback=self.get_tv_shows_genres_command)
             ],
             2: [
                 CommandHandler(command='help', callback=self.help_command),
@@ -99,9 +101,9 @@ class TelegramBot(BaseBot, ABC):
         if movie_names:
             text = f'Found the following movies for you 😀\n\n{movie_names}'
         else:
-            text = f'Could not find any movies similar to the name "{name}" 😞'
+            text = 'Could not find any movies similar to the name "{name}" 😞'
 
-        context.bot.send_message(chat_id, text=text)
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
 
     @command(
         name='find_tv_shows_by_name',
@@ -145,9 +147,9 @@ class TelegramBot(BaseBot, ABC):
         if tv_shows_names:
             text = f'Found the following tv-shows for you 😀\n\n{tv_shows_names}'
         else:
-            text = f'Could not find any tv-shows similar to the name "{name}" 😞'
+            text = 'Could not find any tv-shows similar to the name "{name}" 😞'
 
-        context.bot.send_message(chat_id, text=text)
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
 
     @command(
         name='discover_movies',
@@ -259,9 +261,9 @@ class TelegramBot(BaseBot, ABC):
         if movie_names:
             text = f'Found the following movies for you 😀\n\n{movie_names}'
         else:
-            text = f'Could not find any movies for you 😞'
+            text = 'Could not find any movies for you 😞'
 
-        context.bot.send_message(chat_id, text=text)
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
 
     @command(
         name='discover_tv_shows',
@@ -350,7 +352,8 @@ class TelegramBot(BaseBot, ABC):
         ]
     )
     def discover_tv_shows_command(
-        self, update: Update,
+        self,
+        update: Update,
         context: CallbackContext,
         limit: int,
         sort_by: str = None,
@@ -383,6 +386,34 @@ class TelegramBot(BaseBot, ABC):
         if movie_names:
             text = f'Found the following TV-shows for you 😀\n\n{movie_names}'
         else:
-            text = f'Could not find any TV-shows for you 😞'
+            text = 'Could not find any TV-shows for you 😞'
 
-        context.bot.send_message(chat_id, text=text)
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+
+    @command(name='get_movie_genres', description='Retrieves the available movies genres.')
+    def get_movie_genres_command(self, update: Update, context: CallbackContext):
+
+        chat_id = update.message.chat_id
+        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+
+        movies_genres = self._movie_commands_logic.get_genres()
+        if movies_genres:
+            text = f'Movie Genres 😀\n\n{movies_genres}'
+        else:
+            text = f'Could not find any movie genres. 😞'
+
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+
+    @command(name='get_tv_shows_genres', description='Retrieves the available TV-shows genres.')
+    def get_tv_shows_genres_command(self, update: Update, context: CallbackContext):
+
+        chat_id = update.message.chat_id
+        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+
+        tv_shows_genres = self._tv_shows_commands_logic.get_genres()
+        if tv_shows_genres:
+            text = f'TV-shows Genres 😀\n\n{tv_shows_genres}'
+        else:
+            text = f'Could not find any TV-shows genres. 😞'
+
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
