@@ -17,10 +17,6 @@ class TheMovieDBBaseEntity(BaseEntity, ABC):
     def to_dict(self):
         return self.__dict__
 
-    def __lt__(self, other, sort_by):
-        if sort_by == 'vote_average':
-            return self.rating < other.rating
-        elif sort_by == 'popularity':
-            return self.popularity < other.popularity
-        else:  # sort_by = release_date
-            return self.release_date < other.release_date
+    def __str__(self):
+        return f'id={self.id}, name={self.name}, release_date={self.release_date}, genre_ids={self.genre_ids}, ' \
+               f'overview={self.overview}, popularity={self.popularity}, rating={self.rating}'

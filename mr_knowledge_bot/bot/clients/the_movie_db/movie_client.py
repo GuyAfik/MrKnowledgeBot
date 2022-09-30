@@ -33,6 +33,6 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
         """
         return self.get(url='/discover/movie', params=kwargs)
 
-    @parse_http_response(response_type='json')
+    @parse_http_response(response_type='json', keys=['genres'])
     def get_genres(self):
         return self.get(url='/genre/movie/list')
