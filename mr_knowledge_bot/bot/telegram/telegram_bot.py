@@ -20,7 +20,8 @@ class TelegramBot(BaseBot, ABC):
             1: [
                 CommandHandler(command='find_movies_by_name', callback=self.find_movies_by_name_command),
                 CommandHandler(command='find_tv_shows_by_name', callback=self.find_tv_shows_by_name_command),
-                CommandHandler(command='discover_movies', callback=self.discover_movies_command)
+                CommandHandler(command='discover_movies', callback=self.discover_movies_command),
+                CommandHandler(command='discover_tv_shows', callback=self.discover_tv_shows_command)
             ],
             2: [
                 CommandHandler(command='help', callback=self.help_command),
@@ -154,7 +155,7 @@ class TelegramBot(BaseBot, ABC):
         arguments=[
             Argument(
                 name=['limit', 'l'],
-                description='The maximum amount of tv-shows to return, maximum is 100.',
+                description='The maximum amount of movies to return, maximum is 100.',
                 validator=lambda x: 100 >= x > 0,
                 optional=True,
                 type=int,
@@ -163,7 +164,7 @@ class TelegramBot(BaseBot, ABC):
             ),
             Selection(
                 name=['sort-by', 's'],
-                description='Sort by one of the following: popularity/release_date/rating.',
+                description='Sort by one of the allowed values',
                 optional=True,
                 type=str,
                 example='-s "popularity"',
@@ -190,14 +191,14 @@ class TelegramBot(BaseBot, ABC):
             ),
             Argument(
                 name=['with_genres', 'wg'],
-                description='Movies that are one of the genres that the /get_movie_genres returns',
+                description='Movies that are one of the genres that the get_movie_genres command returns',
                 optional=True,
                 type=str,
                 example='-wg "Science Fiction"',
             ),
             Argument(
                 name=['without_genres', 'wog'],
-                description='Movies that are not one of the genres that the /get_movie_genres returns.',
+                description='Movies that are not one of the genres that the get_movie_genres command returns.',
                 optional=True,
                 type=str,
                 example='-wog "Science Fiction"',
@@ -258,5 +259,124 @@ class TelegramBot(BaseBot, ABC):
 
         context.bot.send_message(chat_id, text=text)
 
-    def discover_tv_shows_command(self, update: Update, context: CallbackContext):
-        pass
+    @command(
+        name='discover_tv_shows',
+        description='Allows you to find TV-shows by several options.',
+        arguments=[
+            Argument(
+                name=['limit', 'l'],
+                description='The maximum amount of tv-shows to return, maximum is 100.',
+                validator=lambda x: 100 >= x > 0,
+                optional=True,
+                type=int,
+                example='-l "80"',
+                default=50,
+            ),
+            Selection(
+                name=['sort-by', 's'],
+                description='Sort by one of the allowed values',
+                optional=True,
+                type=str,
+                example='-s "popularity"',
+                default='popularity',
+                allowed_values=['popularity', 'first_air_date', 'rating']
+            ),
+            Argument(
+                name=['before_date', 'bd'],
+                description='TV-shows that were released before '
+                            'the specified date in the form of a date. "year-month-day"',
+                # validator=lambda x: dateparser.parse(x) is not None,
+                optional=True,
+                example='-bd "2014-09-13"',
+                type=str
+            ),
+            Argument(
+                name=['after_date', 'ad'],
+                description='TV-shows that were released after '
+                            'the specified date in the form of a date. "year-month-day"',
+                # validator=lambda x: dateparser.parse(x) is not None,
+                optional=True,
+                example='-ad "2014-09-13"',
+                type=str
+            ),
+            Argument(
+                name=['with_genres', 'wg'],
+                description='TV-shows that are one of the genres that the get_tv_shows_genres command returns',
+                optional=True,
+                type=str,
+                example='-wg "Science Fiction"',
+            ),
+            Argument(
+                name=['without_genres', 'wog'],
+                description='TV-shows that are not one of the genres that the get_tv_shows_genres returns.',
+                optional=True,
+                type=str,
+                example='-wog "Science Fiction"',
+            ),
+            Argument(
+                name=['before_runtime', 'br'],
+                description='Filter and only include TV shows with an episode runtime '
+                            'that is less than or equal to a value. (minutes)',
+                optional=True,
+                type=int,
+                example='-br "120"',
+            ),
+            Argument(
+                name=['after_runtime', 'ar'],
+                description='Filter and only include TV shows with an episode runtime '
+                            'that is greater than or equal to a value. (minutes)',
+                optional=True,
+                type=int,
+                example='-ar "120"',
+            ),
+            Selection(
+                name=['with_status', 'ws'],
+                description='Filter TV shows by their status.',
+                optional=True,
+                type=str,
+                example='-ws "Planned"',
+                allowed_values=['Returning Series', 'Planned', 'In Production', 'Ended', 'Cancelled', 'Pilot']
+            ),
+            Flag(
+                name=['not_released', 'nr'],
+                description='Bring movies that were still not released.'
+            ),
+        ]
+    )
+    def discover_tv_shows_command(
+        self, update: Update,
+        context: CallbackContext,
+        limit: int,
+        sort_by: str = None,
+        before_date: str = None,
+        after_date: str = None,
+        with_genres: str = None,
+        without_genres: str = None,
+        before_runtime: str = None,
+        after_runtime: str = None,
+        with_status: str = None,
+        not_released: bool = None
+    ):
+
+        chat_id = update.message.chat_id
+        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+
+        movie_names = self._tv_shows_commands_logic.discover(
+            limit=limit,
+            sort_by=sort_by,
+            before_date=before_date,
+            after_date=after_date,
+            with_genres=with_genres,
+            without_genres=without_genres,
+            before_runtime=before_runtime,
+            after_runtime=after_runtime,
+            with_status=with_status,
+            not_released=not_released
+        )
+
+        if movie_names:
+            text = f'Found the following TV-shows for you 😀\n\n{movie_names}'
+        else:
+            text = f'Could not find any TV-shows for you 😞'
+
+        context.bot.send_message(chat_id, text=text)

@@ -39,12 +39,6 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
         """
         Find movies by filter parameters.
         """
-        def genre_names_to_ids(requested_genres):
-            return [
-                available_genre for requested_genre in requested_genres for available_genre in self.genres
-                if requested_genre.lower() == available_genre.get('name', '').lower()
-            ]
-
         filters = {"page": page}
         if sort_by:
             if sort_by == 'popularity':
@@ -65,10 +59,10 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
                 # log out what the date is before and after parsing
                 filters['primary_release_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
 
-        if with_genres and (genre_ids := genre_names_to_ids(with_genres)):
+        if with_genres and (genre_ids := self.genre_names_to_ids(with_genres)):
             filters['with_genres'] = genre_ids
 
-        if without_genres and (genre_ids := genre_names_to_ids(without_genres)):
+        if without_genres and (genre_ids := self.genre_names_to_ids(without_genres)):
             filters['without_genres'] = genre_ids
 
         if before_runtime:
