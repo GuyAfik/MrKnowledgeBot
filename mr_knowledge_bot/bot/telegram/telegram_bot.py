@@ -40,7 +40,7 @@ class TelegramBot(BaseBot, ABC):
     def _unknown_command(self, update: Update, context: CallbackContext):
         self.send_available_commands(update, context)
 
-    @command(name=['help', 'h'], description='List the commands supported by the MrKnowledgeBot')
+    @command(name=['help'], description='List the commands supported by the MrKnowledgeBot')
     def help_command(self, update: Update, context: CallbackContext):
         self.send_available_commands(update, context)
 
@@ -54,7 +54,7 @@ class TelegramBot(BaseBot, ABC):
         last_name = user_info.last_name
 
         text = f'Hello {first_name} {last_name}! Here are the available commands 😎' \
-               f'\n\n{generate_command_list(update, context)}'
+               f'\n\n{generate_command_list(update, context, summary=True)}'
         bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
     @command(
