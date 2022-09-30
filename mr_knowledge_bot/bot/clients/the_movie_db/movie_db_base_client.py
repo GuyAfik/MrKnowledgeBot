@@ -1,8 +1,9 @@
 import os
 import requests
+from abc import ABC, abstractmethod
 
 from mr_knowledge_bot.bot.clients.base_client import BaseClient
-from abc import ABC, abstractmethod
+from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import Genre
 
 
 def poll_by_page_and_limit(limit=500):
@@ -29,6 +30,7 @@ def poll_by_page_and_limit(limit=500):
 
 class TheMovieDBBaseClient(BaseClient, ABC):
     BASE_URL = os.getenv('MOVIE_BASE_URL')
+    genre_entity = Genre
 
     def __init__(self, token=None, base_url=None, verify=True):
         super().__init__(
