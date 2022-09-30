@@ -8,6 +8,7 @@ class TheMovieDBBaseLogic(BaseMoviesTVShowsLogic, ABC):
         self._client = client
         # self._genres = {genre.get('name'): genre.get('id') for genre in self._client.get_genres().get('genres') or []}
         self.genres = self._client.get_genres() or []
+        print(self.genres)
 
     def find_by_name(self, **kwargs):
         return self._client.search(**kwargs)

@@ -40,45 +40,56 @@ class TheMovieDBTVShowLogic(TheMovieDBBaseLogic, ABC):
         with_status=None,
         not_released=None
     ):
+        def _set_up_body_request():
+            _filters = {'page': page}
+            if sort_by:
+                if sort_by == 'popularity':
+                    sort_by_value = 'popularity.desc'
+                elif sort_by == 'first_air_date':
+                    sort_by_value = 'first_air_date.desc'
+                else:  # sort_by == 'rating'
+                    sort_by_value = 'vote_average.desc'
+                _filters['sort_by'] = sort_by_value
 
-        filters = {"page": page}
-        if sort_by:
-            if sort_by == 'popularity':
-                sort_by = 'popularity.desc'
-            elif sort_by == 'first_air_date':
-                sort_by = 'first_air_date.desc'
-            elif sort_by == 'rating':
-                sort_by = 'vote_average.desc'
-            filters['sort_by'] = sort_by
+            if before_date:
+                if parsed_before_data := dateparser.parse(before_date):
+                    # log out what the date is before and after parsing
+                    _filters['first_air_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
 
-        if before_date:
-            if parsed_before_data := dateparser.parse(before_date):
-                # log out what the date is before and after parsing
-                filters['first_air_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
+            if after_date:
+                if parsed_after_date := dateparser.parse(after_date):
+                    # log out what the date is before and after parsing
+                    _filters['first_air_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
 
-        if after_date:
-            if parsed_after_date := dateparser.parse(after_date):
-                # log out what the date is before and after parsing
-                filters['first_air_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
+            if with_genres and (genre_ids := self.genre_names_to_ids(with_genres)):
+                _filters['with_genres'] = genre_ids
 
-        if with_genres and (genre_ids := self.genre_names_to_ids(with_genres)):
-            filters['with_genres'] = genre_ids
+            if without_genres and (genre_ids := self.genre_names_to_ids(without_genres)):
+                _filters['without_genres'] = genre_ids
 
-        if without_genres and (genre_ids := self.genre_names_to_ids(without_genres)):
-            filters['without_genres'] = genre_ids
+            if before_runtime:
+                _filters['with_runtime.lte'] = before_runtime
 
-        if before_runtime:
-            filters['with_runtime.lte'] = before_runtime
+            if after_runtime:
+                _filters['with_runtime.gte'] = after_runtime
 
-        if after_runtime:
-            filters['with_runtime.gte'] = after_runtime
+            return _filters
 
-        tv_shows = super().discover(**filters)
-        if not not_released:  # remove movies which were not released yet.
+        tv_shows = super().discover(**_set_up_body_request())
+
+        if not not_released:  # remove tv-shows which were not released yet or don't have any release-date.
             tv_shows = [
                 tv_show for tv_show in tv_shows if tv_show.release_date and
                 dateparser.parse(tv_show.release_date).strftime('%Y-%m-%d') < datetime.now().strftime('%Y-%m-%d')
             ]
+
+        if sort_by == 'popularity':
+            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None))
+        elif sort_by == 'first_air_date':
+            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None))
+        elif sort_by == 'rating':
+            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None))
+
         if len(tv_shows) > limit:
             tv_shows = tv_shows[:limit]
 
