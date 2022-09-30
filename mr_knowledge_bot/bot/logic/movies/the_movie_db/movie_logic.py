@@ -14,11 +14,10 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
         """
         Find movies by name.
         """
-        movies = super().find_by_name(movie_name=movie_name, limit=limit, sort_by=sort_by)
-
         if sort_by == 'rating':
             sort_by = 'vote_average'
 
+        movies = super().find_by_name(movie_name=movie_name, limit=limit, sort_by=sort_by)
         if len(movies) > limit:
             movies = sorted(movies, key=lambda d: d.get(sort_by), reverse=True)[:limit]
 
@@ -81,11 +80,11 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
         movies = super().discover(**filters)
         if not not_released:  # remove movies which were not released yet.
             movies = [
-                movie for movie in movies if
-                dateparser.parse(movie.get('release_date')).strftime('%Y-%m-%d') < datetime.now().strftime('%Y-%m-%d')
+                movie for movie in movies if movie.release_date and
+                dateparser.parse(movie.release_date).strftime('%Y-%m-%d') < datetime.now().strftime('%Y-%m-%d')
             ]
         if len(movies) > limit:
             movies = movies[:limit]
 
-        return '\n'.join([movie.get('title') for movie in movies])
+        return '\n'.join([movie.name for movie in movies])
 

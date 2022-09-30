@@ -1,12 +1,15 @@
 from abc import ABC
 from mr_knowledge_bot.bot.clients.base_client import parse_http_response
 from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBBaseClient, poll_by_page_and_limit
+from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
 
 
 class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
 
+    movie_entity = TheMovieDBMovieEntity
+
     @poll_by_page_and_limit()
-    @parse_http_response()
+    @parse_http_response(response_type='json', keys=['results'])
     def search(self, **kwargs):
         """
         Searches for movies with a specific name.
@@ -23,13 +26,13 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
         raise ValueError('The "movie_name" argument must be provided')
 
     @poll_by_page_and_limit()
-    @parse_http_response()
+    @parse_http_response(_class_type=movie_entity)
     def discover(self, **kwargs):
         """
         need to add docstring with all query parameters.
         """
         return self.get(url='/discover/movie', params=kwargs)
 
-    @parse_http_response()
+    @parse_http_response(response_type='json')
     def get_genres(self):
         return self.get(url='/genre/movie/list')

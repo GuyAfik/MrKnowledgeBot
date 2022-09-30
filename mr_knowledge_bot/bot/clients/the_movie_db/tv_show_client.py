@@ -1,12 +1,15 @@
 from abc import ABC
 from mr_knowledge_bot.bot.clients.base_client import parse_http_response
 from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBBaseClient, poll_by_page_and_limit
+from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import TheMovieDBTVShowEntity
 
 
 class TheMovieDBTVShowsClient(TheMovieDBBaseClient, ABC):
 
+    tv_show_entity = TheMovieDBTVShowEntity
+
     @poll_by_page_and_limit()
-    @parse_http_response()
+    @parse_http_response(response_type='json', keys=['results'])
     def search(self, **kwargs):
         """
         Searches for movies with a specific name.
@@ -22,9 +25,11 @@ class TheMovieDBTVShowsClient(TheMovieDBBaseClient, ABC):
             return self.get(url='/search/tv', params=params)
         raise ValueError('The "tv_show_name" argument must be provided')
 
+    @poll_by_page_and_limit()
+    @parse_http_response(_class_type=tv_show_entity)
     def discover(self, **kwargs):
-        pass
+        return self.get(url='/discover/tv', params=kwargs)
 
-    @parse_http_response()
+    @parse_http_response(response_type='json')
     def get_genres(self):
         return self.get(url='/genre/tv/list')
