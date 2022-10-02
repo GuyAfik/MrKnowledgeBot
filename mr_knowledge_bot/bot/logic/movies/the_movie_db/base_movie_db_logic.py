@@ -1,8 +1,9 @@
 from abc import ABC
-from mr_knowledge_bot.bot.logic.movies.base import BaseMoviesTVShowsLogic
+from mr_knowledge_bot.bot.logic.movies.base import BaseMoviesTVShowsCommand
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-class TheMovieDBBaseLogic(BaseMoviesTVShowsLogic, ABC):
+class TheMovieDBBaseLogic(BaseMoviesTVShowsCommand, ABC):
 
     def __init__(self, client=None):
         self._client = client
@@ -21,3 +22,13 @@ class TheMovieDBBaseLogic(BaseMoviesTVShowsLogic, ABC):
         names_to_ids = {genre.name: genre.id for genre in self.genres}
         return [names_to_ids.get(genre) for genre in requested_genres if names_to_ids.get(genre)]
 
+    @staticmethod
+    def get_overview_keyboard():
+        return InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(text='Yes', callback_data='y'),
+                    InlineKeyboardButton(text='No', callback_data='n')
+                ]
+            ]
+        )
