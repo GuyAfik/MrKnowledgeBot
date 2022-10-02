@@ -60,7 +60,7 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
                     sort_by_value = 'popularity.desc'
                 elif sort_by == 'release_date':
                     sort_by_value = 'release_date.desc'
-                else: # sort_by == 'rating'
+                else:  # sort_by == 'rating'
                     sort_by_value = 'vote_average.desc'
                 _filters['sort_by'] = sort_by_value
 
