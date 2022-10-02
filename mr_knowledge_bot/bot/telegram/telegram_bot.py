@@ -6,7 +6,6 @@ from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
 from mr_knowledge_bot.bot.logic import MovieLogic, TVShowLogic
 from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InlineQuery, ReplyKeyboardMarkup, KeyboardButton
 
 
 class TelegramBot(BaseBot, ABC):
