@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
+from telegram.ext import CallbackContext
 
 
-class BaseMoviesTVShowsLogic(ABC):
+class BaseMoviesTVShowsCommand(ABC):
 
     @abstractmethod
     def find_by_name(self, **kwargs):
@@ -13,4 +14,8 @@ class BaseMoviesTVShowsLogic(ABC):
 
     @abstractmethod
     def get_genres(self):
+        pass
+
+    @classmethod
+    def from_context(cls, context: CallbackContext):
         pass

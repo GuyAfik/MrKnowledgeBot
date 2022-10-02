@@ -1,6 +1,6 @@
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
 from telegram import Update, ParseMode
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
@@ -10,25 +10,43 @@ from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
 
 class TelegramBot(BaseBot, ABC):
 
+    commands_phase, help_phase, query_movie_for_overview, display_movie_overview_stage = range(4)
+
     def __init__(self, token=None):
         super().__init__(token)
         self._updater = Updater(token=self.token, use_context=True)
-        self._movie_commands_logic = MovieLogic()
-        self._tv_shows_commands_logic = TVShowLogic()
+        self._movie_commands_logic = MovieLogic
+        self._tv_shows_commands_logic = TVShowLogic
+
+        find_movie_by_name_conversation_handler = ConversationHandler(
+            entry_points=[
+                CommandHandler(command='find_movies_by_name', callback=self.find_movies_by_name_command),
+            ],
+            states={
+                self.query_movie_for_overview: [
+                    CallbackQueryHandler(callback=self.query_movie_overview)
+                ],
+                self.display_movie_overview_stage: [
+                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_movie_overview)
+                ]
+            },
+            fallbacks=[MessageHandler(filters=Filters.regex('^exit$'), callback=self.cancel_conversation)],
+            allow_reentry=True
+        )
 
         handler_groups = {
-            1: [
-                CommandHandler(command='find_movies_by_name', callback=self.find_movies_by_name_command),
+            0: [
+                CommandHandler(command='help', callback=self.help_command),
+                find_movie_by_name_conversation_handler,
                 CommandHandler(command='find_tv_shows_by_name', callback=self.find_tv_shows_by_name_command),
                 CommandHandler(command='discover_movies', callback=self.discover_movies_command),
                 CommandHandler(command='discover_tv_shows', callback=self.discover_tv_shows_command),
                 CommandHandler(command='get_movie_genres', callback=self.get_movie_genres_command),
                 CommandHandler(command='get_tv_shows_genres', callback=self.get_tv_shows_genres_command)
             ],
-            2: [
-                CommandHandler(command='help', callback=self.help_command),
-                MessageHandler(Filters.text & ~Filters.command, callback=self._unknown_command)
-            ]
+            # 1: [
+            #     MessageHandler(Filters.text & ~Filters.command, callback=self._unknown_command)
+            # ]
         }
 
         for group, handlers in handler_groups.items():
@@ -38,6 +56,10 @@ class TelegramBot(BaseBot, ABC):
     def start(self):
         self._updater.start_polling()
         self._updater.idle()
+
+    def cancel_conversation(self, update: Update, context: CallbackContext):
+        self.send_available_commands(update, context)
+        return ConversationHandler.END
 
     def _unknown_command(self, update: Update, context: CallbackContext):
         self.send_available_commands(update, context)
@@ -97,13 +119,50 @@ class TelegramBot(BaseBot, ABC):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        movie_names = self._movie_commands_logic.find_by_name(movie_name=name, limit=limit, sort_by=sort_by)
-        if movie_names:
+        movies = self._movie_commands_logic().find_by_name(movie_name=name, limit=limit, sort_by=sort_by)
+        if movies:
+            context.user_data['movies'] = movies
+            movie_names = '\n'.join([movie.name for movie in movies])
             text = f'Found the following movies for you 😀\n\n{movie_names}'
         else:
-            text = 'Could not find any movies similar to the name "{name}" 😞'
+            text = f'Could not find any movies similar to the name "{name}" 😞'
 
         update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+
+        keyboard = self._movie_commands_logic.get_overview_keyboard()
+        context.bot.send_message(
+            chat_id=chat_id, text='Would you like to see an overview of one of the movies?', reply_markup=keyboard
+        )
+
+        return self.query_movie_for_overview
+
+    def query_movie_overview(self, update: Update, context: CallbackContext):
+        movie_commands_logic = self._movie_commands_logic.from_context(context)
+        movies_to_choose = movie_commands_logic.choose_movie(update.callback_query.data)
+        if movies_to_choose:
+            text = 'Please choose a movie from the list to get its overview.'
+            next_stage = self.display_movie_overview_stage
+        else:
+            text = 'I hope you to see you around again! 😀'
+            next_stage = ConversationHandler.END
+
+        context.bot.send_message(chat_id=update.callback_query.message.chat_id, text=text, reply_markup=movies_to_choose)
+        return next_stage
+
+    def display_movie_overview(self, update: Update, context: CallbackContext):
+        movie_commands_logic = self._movie_commands_logic.from_context(context)
+        chosen_movie_name = update.message.text
+
+        movie_overview = movie_commands_logic.get_movie_overview(chosen_movie_name)
+        if movie_overview:
+            text = f'{chosen_movie_name} - (Overview):\n\n{movie_overview}'
+            next_phase = ConversationHandler.END
+        else:
+            text = 'I could not understand which movie you meant 🤔, please choose again from the list.'
+            next_phase = self.display_movie_overview_stage
+
+        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        return next_phase
 
     @command(
         name='find_tv_shows_by_name',
@@ -143,17 +202,17 @@ class TelegramBot(BaseBot, ABC):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        tv_shows_names = self._tv_shows_commands_logic.find_by_name(tv_show_name=name, limit=limit, sort_by=sort_by)
+        tv_shows_names = self._tv_shows_commands_logic().find_by_name(tv_show_name=name, limit=limit, sort_by=sort_by)
         if tv_shows_names:
             text = f'Found the following tv-shows for you 😀\n\n{tv_shows_names}'
         else:
-            text = 'Could not find any tv-shows similar to the name "{name}" 😞'
+            text = f'Could not find any tv-shows similar to the name "{name}" 😞'
 
         update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
 
     @command(
         name='discover_movies',
-        description='Allows you to find movies by several options.',
+        description='Allows you to discover movies by several options.',
         arguments=[
             Argument(
                 name=['limit', 'l'],
@@ -177,7 +236,6 @@ class TelegramBot(BaseBot, ABC):
                 name=['before_date', 'bd'],
                 description='Movies that were released before '
                             'the specified date in the form of a date. "year-month-day"',
-                # validator=lambda x: dateparser.parse(x) is not None,
                 optional=True,
                 example='-bd "2014-09-13"',
                 type=str
@@ -186,7 +244,6 @@ class TelegramBot(BaseBot, ABC):
                 name=['after_date', 'ad'],
                 description='Movies that were released after '
                             'the specified date in the form of a date. "year-month-day"',
-                # validator=lambda x: dateparser.parse(x) is not None,
                 optional=True,
                 example='-ad "2014-09-13"',
                 type=str
@@ -246,7 +303,7 @@ class TelegramBot(BaseBot, ABC):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        movie_names = self._movie_commands_logic.discover(
+        movie_names = self._movie_commands_logic().discover(
             limit=limit,
             sort_by=sort_by,
             before_date=before_date,
@@ -267,7 +324,7 @@ class TelegramBot(BaseBot, ABC):
 
     @command(
         name='discover_tv_shows',
-        description='Allows you to find TV-shows by several options.',
+        description='Allows you to discover TV-shows by several options.',
         arguments=[
             Argument(
                 name=['limit', 'l'],
@@ -291,7 +348,6 @@ class TelegramBot(BaseBot, ABC):
                 name=['before_date', 'bd'],
                 description='TV-shows that were released before '
                             'the specified date in the form of a date. "year-month-day"',
-                # validator=lambda x: dateparser.parse(x) is not None,
                 optional=True,
                 example='-bd "2014-09-13"',
                 type=str
@@ -300,7 +356,6 @@ class TelegramBot(BaseBot, ABC):
                 name=['after_date', 'ad'],
                 description='TV-shows that were released after '
                             'the specified date in the form of a date. "year-month-day"',
-                # validator=lambda x: dateparser.parse(x) is not None,
                 optional=True,
                 example='-ad "2014-09-13"',
                 type=str
@@ -370,7 +425,7 @@ class TelegramBot(BaseBot, ABC):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        movie_names = self._tv_shows_commands_logic.discover(
+        movie_names = self._tv_shows_commands_logic().discover(
             limit=limit,
             sort_by=sort_by,
             before_date=before_date,
@@ -396,7 +451,7 @@ class TelegramBot(BaseBot, ABC):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        movies_genres = self._movie_commands_logic.get_genres()
+        movies_genres = self._movie_commands_logic().get_genres()
         if movies_genres:
             text = f'Movie Genres 😀\n\n{movies_genres}'
         else:
@@ -410,7 +465,7 @@ class TelegramBot(BaseBot, ABC):
         chat_id = update.message.chat_id
         context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        tv_shows_genres = self._tv_shows_commands_logic.get_genres()
+        tv_shows_genres = self._tv_shows_commands_logic().get_genres()
         if tv_shows_genres:
             text = f'TV-shows Genres 😀\n\n{tv_shows_genres}'
         else:

@@ -3,12 +3,19 @@ from datetime import datetime
 from mr_knowledge_bot.bot.clients import MovieClient
 from mr_knowledge_bot.bot.logic.movies.the_movie_db.base_movie_db_logic import TheMovieDBBaseLogic
 from abc import ABC
+from telegram.ext import CallbackContext
+from telegram import ReplyKeyboardMarkup
 
 
 class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
 
-    def __init__(self):
+    def __init__(self, movies=None):
         super().__init__(client=MovieClient())
+        self.movies = movies
+
+    @classmethod
+    def from_context(cls, context: CallbackContext):
+        return cls(movies=context.user_data.get('movies'))
 
     def find_by_name(self, movie_name, limit, sort_by):
         """
@@ -19,9 +26,16 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
 
         movies = super().find_by_name(movie_name=movie_name, limit=limit, sort_by=sort_by)
         if len(movies) > limit:
-            movies = sorted(movies, key=lambda d: d.get(sort_by))[:limit]
+            if sort_by == 'popularity':
+                movies = sorted(movies, key=lambda movie: (movie.release_date, movie.release_date is not None))
+            elif sort_by == 'release_date':
+                movies = sorted(movies, key=lambda movie: (movie.release_date, movie.release_date is not None))
+            elif sort_by == 'rating':
+                movies = sorted(movies, key=lambda movie: (movie.rating, movie.rating is not None))
 
-        return '\n'.join([movie.get('title') for movie in movies])
+            movies = movies[:limit]
+
+        return movies
 
     def discover(
         self,
@@ -46,7 +60,7 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
                     sort_by_value = 'popularity.desc'
                 elif sort_by == 'release_date':
                     sort_by_value = 'release_date.desc'
-                else: # sort_by == 'rating'
+                else:  # sort_by == 'rating'
                     sort_by_value = 'vote_average.desc'
                 _filters['sort_by'] = sort_by_value
 
@@ -93,3 +107,19 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
 
         return '\n'.join([movie.name for movie in movies])
 
+    def choose_movie(self, answer):
+        if answer == 'n':  # user does not want to see movie overview
+            return None
+        # user wants to see the movie overview
+        return ReplyKeyboardMarkup.from_column(
+            [movie.name for movie in self.movies], resize_keyboard=True, one_time_keyboard=True
+        )
+
+    def get_movie_overview(self, chosen_movie):
+        """
+        Returns an overview of a movie.
+        """
+        for movie in self.movies:
+            if chosen_movie == movie.name:
+                return movie.overview
+        return None
