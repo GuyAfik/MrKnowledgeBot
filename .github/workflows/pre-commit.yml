@@ -12,13 +12,10 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
-        - name: Set up Python 3.10
-          uses: actions/setup-python@v1
+        - name: Install dependencies
+          uses: VaultVulp/action-pipenv@v2.0.1
           with:
-            python-version: 3.10.7
-        - name: install python dependencies
+            command: install -d # Install all dependencies, including development ones
+        - name: run-pre-commit
           run: |
-            pip install pre-commit
-        - name: Linting
-          run: |
-            pre-commit run --all-files
+            pre-commit run -a
