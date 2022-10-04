@@ -52,6 +52,11 @@ class TheMovieDBBaseClient(BaseClient, ABC):
             raise ValueError(f'{_type} can be only "movie" or "tv"')
         return self.get(url=f'/{_type}/{_id}/videos')
 
+    def get_details(self, _id, _type):
+        if _type not in ('movie', 'tv'):
+            raise ValueError(f'{_type} can be only "movie" or "tv"')
+        return self.get(url=f'/{_type}/{_id}')
+
     @abstractmethod
     def search(self, **kwargs):
         pass

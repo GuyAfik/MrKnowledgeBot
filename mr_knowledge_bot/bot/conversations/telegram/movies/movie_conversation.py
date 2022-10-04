@@ -10,8 +10,8 @@ from mr_knowledge_bot.bot.services import MovieService
 
 class TelegramMovieConversation(Conversation, ABC):
     (
-        query_movie_for_overview_stage,
-        display_movie_overview_stage,
+        query_movie_details_stage,
+        display_movie_details_stage,
         query_movie_for_trailer_stage,
         display_movie_trailer_stage
     ) = range(4)
@@ -66,7 +66,7 @@ class TelegramMovieConversation(Conversation, ABC):
                 text=f'Found the following movies for you 😀\n\n{movie_names}',
                 reply_to_message_id=self._update.message.message_id
             )
-            next_stage = self.yes_or_no_movie_overview()
+            next_stage = self.yes_or_no_movie_details()
         else:
             self._update.effective_message.reply_text(
                 text=f'Could not find any movies for you 😞',
@@ -76,14 +76,14 @@ class TelegramMovieConversation(Conversation, ABC):
 
         return next_stage
 
-    def yes_or_no_movie_overview(self):
+    def yes_or_no_movie_details(self):
         self._context.bot.send_message(
             chat_id=self.get_chat_id(),
-            text='Would you like to see an overview of one of the movies 🎬?',
+            text='Would you like to get details of one of the movies 🎬?',
             reply_markup=self.get_yes_or_no_keyboard()
         )
 
-        return self.query_movie_for_overview_stage
+        return self.query_movie_details_stage
 
     def choose_movie(self, answer):
         if answer == 'n':  # user does not want to proceed
@@ -99,7 +99,7 @@ class TelegramMovieConversation(Conversation, ABC):
             self._context.bot.send_message(
                 text=text, reply_markup=movies_to_choose, chat_id=self.get_chat_id()
             )
-            next_stage = self.display_movie_overview_stage
+            next_stage = self.display_movie_details_stage
         else:
             if self._context.user_data.get('repeat'):
                 next_stage = ConversationHandler.END
@@ -114,13 +114,26 @@ class TelegramMovieConversation(Conversation, ABC):
 
         return next_stage
 
-    def display_movie_overview(self):
+    def display_movie_details(self):
         chosen_movie = self._update.message.text
-        if movie_overview := self._movie_service.get_movie_overview(chosen_movie=chosen_movie):
+        if movie := self._movie_service.get_movie_details(chosen_movie):
+            text = ''
+            if movie_overview := movie.overview:
+                text = f'*{chosen_movie} - (Overview)*\n\n{movie_overview}'
+            if movie_duration := movie.runtime:
+                text = f'{text}\n\n*Duration:* {movie_duration}'
+            if movie_homepage := movie.homepage:
+                text = f'{text}\n\n*Homepage:* {movie_homepage}'
+            if movie_status := movie.status:
+                text = f'{text}\n\n*Status:* {movie_status}'
+            if movie_release_date := movie.release_date:
+                text = f'{text}\n\n*Release date:* {movie_release_date}'
+
             self._update.effective_message.reply_text(
-                text=f'{chosen_movie} - (Overview)\n\n{movie_overview}',
+                text=text,
                 reply_to_message_id=self._update.message.message_id,
-                reply_markup=ReplyKeyboardRemove()
+                reply_markup=ReplyKeyboardRemove(),
+                parse_mode=ParseMode.MARKDOWN
             )
             next_stage = self.yes_or_no_movie_trailer()
         else:
@@ -128,7 +141,7 @@ class TelegramMovieConversation(Conversation, ABC):
                 text='I could not understand which movie you meant 🤔, please choose again from the list.',
                 reply_to_message_id=self._update.message.message_id
             )
-            next_stage = self.display_movie_overview_stage
+            next_stage = self.display_movie_details_stage
         return next_stage
 
     def yes_or_no_movie_trailer(self):
@@ -185,4 +198,4 @@ class TelegramMovieConversation(Conversation, ABC):
             chat_id=self.get_chat_id()
         )
         self._context.user_data['repeat'] = True
-        return self.query_movie_for_overview_stage
+        return self.query_movie_details_stage

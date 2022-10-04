@@ -106,15 +106,6 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
 
         return movies
 
-    def get_movie_overview(self, chosen_movie):
-        """
-        Returns an overview of a movie.
-        """
-        for movie in self.movies:
-            if chosen_movie == movie.name:
-                return movie.overview
-        return None
-
     def get_trailer(self, chosen_movie):
         """
         Returns a trailer of a movie.
@@ -127,3 +118,8 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
             return ''
         return None
 
+    def get_movie_details(self, chosen_movie):
+        for movie in self.movies:
+            if chosen_movie == movie.name:
+                return super().get_movie_details(movie_id=movie.id)
+        return None

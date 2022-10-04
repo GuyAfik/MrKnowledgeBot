@@ -39,3 +39,7 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
 
     def get_videos(self, _id, _type='movie'):
         return super().get_videos(_id=_id, _type=_type)
+
+    @parse_http_response(_class_type=movie_entity)
+    def get_details(self, _id, _type='movie'):
+        return super().get_details(_id=_id, _type=_type)

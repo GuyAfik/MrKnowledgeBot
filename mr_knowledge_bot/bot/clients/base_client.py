@@ -26,7 +26,10 @@ def response_to_tv_show_entities(response: dict):
 
 
 def response_to_movie_entities(response: dict):
-    results = response.get('results')
+
+    if 'results' not in response:
+        return TheMovieDBMovieEntity.from_response(response)
+    results = response.get('results') or []
     return [TheMovieDBMovieEntity.from_response(result) for result in results]
 
 
