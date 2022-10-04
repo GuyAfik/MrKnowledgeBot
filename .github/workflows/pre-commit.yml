@@ -21,6 +21,7 @@ jobs:
             pip install pipenv
             pipenv install
             pipenv sync
+            pip list
         - name: Linting
           run: |
             pre-commit run -a
