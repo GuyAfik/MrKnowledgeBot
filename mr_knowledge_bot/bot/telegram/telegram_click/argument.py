@@ -131,6 +131,7 @@ class Flag(Argument):
         :param description: a short description of the argument
         """
         super().__init__(name, description, example="", type=bool, flag=True, optional=True, default=False)
+        print(name)
 
 
 class Selection(Argument):
