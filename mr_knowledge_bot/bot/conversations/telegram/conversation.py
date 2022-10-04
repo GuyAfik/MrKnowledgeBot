@@ -20,6 +20,11 @@ class Conversation(ABC):
         message = self._update.message or self._update.callback_query.message
         return message.chat_id
 
+    def get_message_id(self):
+        message = self._update.callback_query.message or self._update.message or self._update.effective_message \
+                  or self._update.effective_message or self._update.message.reply_to_message
+        return message.message_id
+
     @staticmethod
     def get_yes_or_no_keyboard():
         return InlineKeyboardMarkup(

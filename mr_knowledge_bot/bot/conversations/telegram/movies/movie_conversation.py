@@ -79,29 +79,38 @@ class TelegramMovieConversation(Conversation, ABC):
     def yes_or_no_movie_overview(self):
         self._context.bot.send_message(
             chat_id=self.get_chat_id(),
-            text='Would you like to see an overview of one of the movies?',
+            text='Would you like to see an overview of one of the movies 🎬?',
             reply_markup=self.get_yes_or_no_keyboard()
         )
 
         return self.query_movie_for_overview_stage
 
     def choose_movie(self, answer):
-        if answer == 'n':  # user does not want to see movie overview
+        if answer == 'n':  # user does not want to proceed
             return None
-        # user wants to see the movie overview
+        # user wants to proceed, e.g.: answer = 'y'
         return ReplyKeyboardMarkup.from_column(
             [movie.name for movie in self._movie_service.movies], resize_keyboard=True, one_time_keyboard=True
         )
 
     def query_movie_overview(self):
         if movies_to_choose := self.choose_movie(self._update.callback_query.data):
-            text = 'Please choose a movie from the list to get its overview.'
+            text = 'Please choose a movie from the list to get its overview 🎬'
             self._context.bot.send_message(
-                text=text, reply_markup=movies_to_choose, chat_id=self._update.callback_query.message.chat_id
+                text=text, reply_markup=movies_to_choose, chat_id=self.get_chat_id()
             )
             next_stage = self.display_movie_overview_stage
         else:
-            next_stage = self.yes_or_no_movie_trailer()
+            if self._context.user_data.get('repeat'):
+                next_stage = ConversationHandler.END
+                self._context.bot.edit_message_text(
+                    text='Thank you! If you want to see additional commands, run /help',
+                    chat_id=self.get_chat_id(),
+                    message_id=self.get_message_id()
+                )
+                self._context.user_data['repeat'] = False
+            else:
+                next_stage = self.yes_or_no_movie_trailer()
 
         return next_stage
 
@@ -124,7 +133,7 @@ class TelegramMovieConversation(Conversation, ABC):
 
     def yes_or_no_movie_trailer(self):
         self._context.bot.send_message(
-            text='Would you like to view a trailer for one of the movies?',
+            text='Would you like to view a trailer for one of the movies? 🎬',
             reply_markup=self.get_yes_or_no_keyboard(),
             chat_id=self.get_chat_id()
         )
@@ -132,13 +141,13 @@ class TelegramMovieConversation(Conversation, ABC):
 
     def query_movie_trailer(self):
         if movies_to_choose := self.choose_movie(self._update.callback_query.data):
-            text = 'Please choose a movie from the list to get its trailer.'
+            text = 'Please choose a movie from the list to get its trailer 🎬'
             self._context.bot.send_message(
                 text=text, reply_markup=movies_to_choose, chat_id=self._update.callback_query.message.chat_id
             )
             next_stage = self.display_movie_trailer_stage
         else:
-            next_stage = ConversationHandler.END
+            next_stage = self.query_additional_movies()
 
         return next_stage
 
@@ -151,7 +160,7 @@ class TelegramMovieConversation(Conversation, ABC):
                 reply_to_message_id=self._update.message.message_id,
                 parse_mode=ParseMode.MARKDOWN
             )
-            next_stage = ConversationHandler.END
+            next_stage = self.query_additional_movies()
         elif movie_trailer is None:
             self._update.effective_message.reply_text(
                 text='I could not understand which movie you meant 🤔, please choose again from the list.',
@@ -165,6 +174,15 @@ class TelegramMovieConversation(Conversation, ABC):
                 reply_to_message_id=self._update.message.message_id,
                 reply_markup=ReplyKeyboardRemove()
             )
-            next_stage = ConversationHandler.END
+            next_stage = self.query_additional_movies()
 
         return next_stage
+
+    def query_additional_movies(self):
+        self._context.bot.send_message(
+            text='Would you like to get details of any other of the found movies? 🎬',
+            reply_markup=self.get_yes_or_no_keyboard(),
+            chat_id=self.get_chat_id()
+        )
+        self._context.user_data['repeat'] = True
+        return self.query_movie_for_overview_stage
