@@ -19,9 +19,8 @@ jobs:
         - name: install python dependencies
           run: |
             pip install pipenv
-            pipenv shell
-            pipenv sync
-            pip list
+            pipenv install
+            pipenv run pip freeze
         - name: Linting
           run: |
             pre-commit run -a
