@@ -23,5 +23,5 @@ jobs:
             pipenv run pip freeze
         - name: Linting
           run: |
-            pipenv install pre-commit
+            pipenv shell
             pipenv run "pre-commit run --all-files"
