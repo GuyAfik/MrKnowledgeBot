@@ -18,9 +18,6 @@ jobs:
             python-version: 3.10.7
         - name: install python dependencies
           run: |
-#            pip install pipenv
-#            pipenv install -d
-#            pipenv run pip freeze
             pip install pre-commit
         - name: Linting
           run: |
