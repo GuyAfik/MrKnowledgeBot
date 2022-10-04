@@ -8,17 +8,17 @@ on:
 
 
 jobs:
-    pre-commit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.10
-      - name: install python dependencies
-        run: |
-          pipenv install
-      - name: Linting
-        run: |
-          pre-commit run -a
+  pre-commit:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.10
+    - name: install python dependencies
+      run: |
+        pipenv install
+    - name: Linting
+      run: |
+        pre-commit run -a
