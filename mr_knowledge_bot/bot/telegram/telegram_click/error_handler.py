@@ -77,7 +77,10 @@ class DefaultErrorHandler(ErrorHandler):
         message = update.effective_message
         chat_id = message.chat_id
 
-        denied_text = '\n'.join([f'Error: {exception}', '', help_message])
+        if str(exception) == "Unknown argument '-h'":
+            denied_text = '\n'.join(['', help_message])
+        else:
+            denied_text = '\n'.join([f'Error: {exception}', '', help_message])
 
         send_message(bot, chat_id=chat_id,
                      message=denied_text,
