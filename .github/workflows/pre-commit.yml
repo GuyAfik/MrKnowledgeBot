@@ -21,6 +21,7 @@ jobs:
             pip install pipenv
             pipenv install
             pipenv sync
+            pipenv shell
             pip list
         - name: Linting
           run: |
