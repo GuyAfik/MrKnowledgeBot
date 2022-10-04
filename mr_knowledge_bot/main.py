@@ -7,8 +7,10 @@ if __name__ == '__main__':
     bot = Bot()
     bot.start()
 
-    # a = MovieClient()
-    # b = a.discover(**{'primary_release_date.gte': '2022-09-27'})
+    a = MovieClient()
+    b = a.search(movie_name='interstellar')
+    interstellar_id = 157336
+    c = a.get_videos(_id=interstellar_id)
     # c = TVShowsClient()
     # d = c.discover(**{'primary_release_date.gte': '2022-09-27'})
-    # print()
+    print()

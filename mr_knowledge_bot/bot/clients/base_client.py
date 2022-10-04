@@ -4,7 +4,8 @@ from json.decoder import JSONDecodeError
 from types import SimpleNamespace
 from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import TheMovieDBTVShowEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import Genre
+from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
+from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
 from mr_knowledge_bot.bot.entites.base_entity import BaseEntity
 from typing import Type, Optional, Any
 
@@ -29,9 +30,14 @@ def response_to_movie_entities(response: dict):
     return [TheMovieDBMovieEntity.from_response(result) for result in results]
 
 
+def response_to_video_entities(response: dict):
+    results = response.get('results')
+    return [VideoEntity.from_response(result) for result in results]
+
+
 def response_to_genre_entity(response: dict):
     genres = response.get('genres')
-    return [Genre.from_response(genre) for genre in genres]
+    return [GenreEntity.from_response(genre) for genre in genres]
 
 
 def dict_get_nested_fields(dictionary: dict, keys: Optional[list], default: Any = None):
@@ -86,7 +92,8 @@ def parse_http_response(
     _class_type_to_entity = {
         TheMovieDBTVShowEntity: response_to_tv_show_entities,
         TheMovieDBMovieEntity: response_to_movie_entities,
-        Genre: response_to_genre_entity
+        GenreEntity: response_to_genre_entity,
+        VideoEntity: response_to_video_entities
     }
 
     def decorator(func):

@@ -36,3 +36,6 @@ class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):
     @parse_http_response(_class_type=TheMovieDBBaseClient.genre_entity)
     def get_genres(self):
         return self.get(url='/genre/movie/list')
+
+    def get_videos(self, _id, _type='movie'):
+        return super().get_videos(_id=_id, _type=_type)

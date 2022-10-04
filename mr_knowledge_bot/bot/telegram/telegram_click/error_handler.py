@@ -51,7 +51,7 @@ class DefaultErrorHandler(ErrorHandler):
     def __init__(self, silent_denial: bool = True, print_error: bool = False):
         """
         Creates an instance
-        :param silent_denial: Whether to silently ignore commands from users without permission
+        :param silent_denial: Whether to silently ignore conversations from users without permission
         :param print_error: Whether to print a stacktrace on execution errors
         """
         self.silent_denial = silent_denial

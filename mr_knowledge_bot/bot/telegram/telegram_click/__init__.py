@@ -8,7 +8,7 @@ from mr_knowledge_bot.bot.telegram.telegram_click.util import escape_for_markdow
 
 LOGGER = logging.getLogger(__name__)
 
-# global list of all commands
+# global list of all conversations
 COMMAND_LIST = []
 
 
@@ -28,7 +28,7 @@ class CommandTarget:
 
 def generate_command_list(update: Update, context: CallbackContext, summary: bool = False) -> str:
     """
-    :return: a Markdown styled text description of all available commands
+    :return: a Markdown styled text description of all available conversations
     """
     if summary:
         return '\n'.join(
@@ -50,10 +50,10 @@ def generate_command_list(update: Update, context: CallbackContext, summary: boo
 
 
         if len(COMMAND_LIST) <= 0:
-            return "This bot does not have any commands."
+            return "This bot does not have any conversations."
 
         if len(commands_not_hidden) <= 0:
-            return "You do not have permission to use commands."
+            return "You do not have permission to use conversations."
 
         return "\n\n".join([
             *help_messages

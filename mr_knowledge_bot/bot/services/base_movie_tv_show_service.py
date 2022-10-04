@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from telegram.ext import CallbackContext
 
 
-class BaseMoviesTVShowsCommand(ABC):
+class BaseMoviesTVShowsService(ABC):
 
     @abstractmethod
     def find_by_name(self, **kwargs):
