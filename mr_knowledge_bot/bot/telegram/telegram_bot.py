@@ -22,10 +22,10 @@ class TelegramBot(BaseBot, ABC):
                 CommandHandler(command='discover_movies', callback=self.discover_movies_command),
             ],
             states={
-                self._movie_conversation.query_movie_for_overview_stage: [
+                self._movie_conversation.query_movie_details_stage: [
                     CallbackQueryHandler(callback=self.query_movie_overview)
                 ],
-                self._movie_conversation.display_movie_overview_stage: [
+                self._movie_conversation.display_movie_details_stage: [
                     MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_movie_overview)
                 ],
                 self._movie_conversation.query_movie_for_trailer_stage: [
@@ -230,7 +230,7 @@ class TelegramBot(BaseBot, ABC):
         return self._movie_conversation(update, context).query_movie_overview()
 
     def display_movie_overview(self, update: Update, context: CallbackContext):
-        return self._movie_conversation(update, context).display_movie_overview()
+        return self._movie_conversation(update, context).display_movie_details()
 
     def query_movie_trailer(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).query_movie_trailer()

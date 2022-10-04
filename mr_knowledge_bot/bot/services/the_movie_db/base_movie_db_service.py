@@ -1,6 +1,5 @@
 from abc import ABC
 from mr_knowledge_bot.bot.services.base_movie_tv_show_service import BaseMoviesTVShowsService
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class TheMovieDBBaseService(BaseMoviesTVShowsService, ABC):
@@ -14,6 +13,9 @@ class TheMovieDBBaseService(BaseMoviesTVShowsService, ABC):
 
     def discover(self, **kwargs):
         return self._client.discover(**kwargs)
+
+    def get_movie_details(self, movie_id):
+        return self._client.get_details(movie_id)
 
     def get_genres(self):
         return '\n'.join(genre.name for genre in self.genres)
