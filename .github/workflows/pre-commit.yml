@@ -19,9 +19,8 @@ jobs:
         - name: install python dependencies
           run: |
             pip install pipenv
-            pipenv install
-            pipenv sync
             pipenv shell
+            pipenv sync
             pip list
         - name: Linting
           run: |
