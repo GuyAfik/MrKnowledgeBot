@@ -19,7 +19,7 @@ jobs:
         - name: install python dependencies
           run: |
             pip install pipenv
-            pipenv install
+            pipenv install -d
             pipenv run pip freeze
         - name: Linting
           run: |
