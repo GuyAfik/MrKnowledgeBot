@@ -21,7 +21,6 @@ jobs:
             pip install pipenv
             pipenv install -d
             pipenv run pip freeze
-            pre-commit run -a
-#        - name: Linting
-#          run: |
-#            pre-commit run -a
+        - name: Linting
+          run: |
+            pipenv run "pre-commit run --all-files"
