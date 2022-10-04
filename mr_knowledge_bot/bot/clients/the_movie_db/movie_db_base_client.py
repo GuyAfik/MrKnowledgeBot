@@ -1,11 +1,12 @@
 import os
-import requests
 from abc import ABC, abstractmethod
 
-from mr_knowledge_bot.bot.clients.base_client import BaseClient
+import requests
+
+from mr_knowledge_bot.bot.clients.base_client import (BaseClient,
+                                                      parse_http_response)
 from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
-from mr_knowledge_bot.bot.clients.base_client import parse_http_response
 
 
 def poll_by_page_and_limit(limit=500):
@@ -68,4 +69,3 @@ class TheMovieDBBaseClient(BaseClient, ABC):
     @abstractmethod
     def discover(self, **kwargs):
         pass
-

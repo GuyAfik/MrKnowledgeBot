@@ -53,7 +53,8 @@ def parse_command_args(arguments: str or None, expected_args: List[Argument]) ->
 
             if all_flags:
                 if value is not None:
-                    raise ValueError("Unexpected flag value: {}".format(arg_key))
+                    raise ValueError(
+                        "Unexpected flag value: {}".format(arg_key))
 
                 # process characters as flags
                 for char in arg_name:
@@ -180,7 +181,8 @@ def split_into_tokens(text: str) -> List[str]:
         current_token = current_token + character
 
     if in_quote:
-        raise ValueError("Missing closing quotation character: {}".format(start_quote_char))
+        raise ValueError(
+            "Missing closing quotation character: {}".format(start_quote_char))
 
     if len(current_token) > 0:
         tokens.append(current_token)
@@ -250,8 +252,8 @@ def is_argument_key(text: str, abbreviated: bool or None = None) -> bool:
             return False
 
     return (
-            not is_quoted(text)
-            and starts_with_naming_prefix(text, abbreviated)
+        not is_quoted(text)
+        and starts_with_naming_prefix(text, abbreviated)
     )
 
 

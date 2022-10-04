@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from telegram import Update
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class Conversation(ABC):
@@ -22,7 +22,7 @@ class Conversation(ABC):
 
     def get_message_id(self):
         message = self._update.callback_query.message or self._update.message or self._update.effective_message \
-                  or self._update.effective_message or self._update.message.reply_to_message
+            or self._update.effective_message or self._update.message.reply_to_message
         return message.message_id
 
     @staticmethod

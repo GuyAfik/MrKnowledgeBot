@@ -18,4 +18,3 @@ class TheMovieDBBaseEntity(BaseEntity, ABC):
 
     def __str__(self):
         return ", ".join([f'{attr_name}={attr_value}' for attr_name, attr_value in self.to_dict().items()])
-

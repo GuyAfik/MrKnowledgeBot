@@ -1,7 +1,8 @@
 
+import datetime
+
 from mr_knowledge_bot.bot.entites.the_movie_db.base import TheMovieDBBaseEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
-import datetime
 
 
 class TheMovieDBMovieEntity(TheMovieDBBaseEntity):
@@ -10,7 +11,8 @@ class TheMovieDBMovieEntity(TheMovieDBBaseEntity):
         super().__init__(_id, name)
         self.release_date = release_date
         try:
-            self.genres = [GenreEntity.from_response(genre) for genre in genres]
+            self.genres = [GenreEntity.from_response(
+                genre) for genre in genres]
         except (TypeError, AttributeError):
             self.genres = genres
         self.overview = overview

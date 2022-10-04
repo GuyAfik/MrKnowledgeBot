@@ -1,11 +1,17 @@
 from abc import ABC
+
+from telegram import ParseMode, ReplyKeyboardRemove, Update
+from telegram.ext import (CallbackContext, CallbackQueryHandler,
+                          CommandHandler, ConversationHandler, Filters,
+                          MessageHandler, Updater)
+
 from mr_knowledge_bot.bot.base_bot import BaseBot
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
-from telegram import Update, ParseMode, ReplyKeyboardRemove
-from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
-from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
 from mr_knowledge_bot.bot.conversations import MovieConversation
 from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
+from mr_knowledge_bot.bot.telegram.telegram_click.argument import (Argument,
+                                                                   Flag,
+                                                                   Selection)
+from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 
 
 class TelegramBot(BaseBot, ABC):
@@ -18,24 +24,29 @@ class TelegramBot(BaseBot, ABC):
 
         movies_conversation_handler = ConversationHandler(
             entry_points=[
-                CommandHandler(command='find_movies_by_name', callback=self.find_movies_by_name_command),
-                CommandHandler(command='discover_movies', callback=self.discover_movies_command),
+                CommandHandler(command='find_movies_by_name',
+                               callback=self.find_movies_by_name_command),
+                CommandHandler(command='discover_movies',
+                               callback=self.discover_movies_command),
             ],
             states={
                 self._movie_conversation.query_movie_details_stage: [
                     CallbackQueryHandler(callback=self.query_movie_overview)
                 ],
                 self._movie_conversation.display_movie_details_stage: [
-                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_movie_overview)
+                    MessageHandler(filters=Filters.regex(
+                        '^(?!.*exit).*$'), callback=self.display_movie_overview)
                 ],
                 self._movie_conversation.query_movie_for_trailer_stage: [
                     CallbackQueryHandler(callback=self.query_movie_trailer)
                 ],
                 self._movie_conversation.display_movie_trailer_stage: [
-                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_movie_trailer)
+                    MessageHandler(filters=Filters.regex(
+                        '^(?!.*exit).*$'), callback=self.display_movie_trailer)
                 ]
             },
-            fallbacks=[MessageHandler(filters=Filters.regex('^exit$'), callback=self.cancel_conversation)],
+            fallbacks=[MessageHandler(filters=Filters.regex(
+                '^exit$'), callback=self.cancel_conversation)],
             allow_reentry=True
         )
 
@@ -274,15 +285,18 @@ class TelegramBot(BaseBot, ABC):
         self, update: Update, context: CallbackContext, name: str, limit: int, sort_by: str
     ):
         chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+        context.bot.send_message(
+            chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
-        tv_shows_names = self._tv_shows_service().find_by_name(tv_show_name=name, limit=limit, sort_by=sort_by)
+        tv_shows_names = self._tv_shows_service().find_by_name(
+            tv_show_name=name, limit=limit, sort_by=sort_by)
         if tv_shows_names:
             text = f'Found the following tv-shows for you 😀\n\n{tv_shows_names}'
         else:
             text = f'Could not find any tv-shows similar to the name "{name}" 😞'
 
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        update.effective_message.reply_text(
+            text=text, reply_to_message_id=update.message.message_id)
 
     @command(
         name='discover_tv_shows',
@@ -360,7 +374,8 @@ class TelegramBot(BaseBot, ABC):
                 optional=True,
                 type=str,
                 example='-ws "Planned"',
-                allowed_values=['Returning Series', 'Planned', 'In Production', 'Ended', 'Cancelled', 'Pilot']
+                allowed_values=['Returning Series', 'Planned',
+                                'In Production', 'Ended', 'Cancelled', 'Pilot']
             ),
             Flag(
                 name=['not_released', 'nr'],
@@ -385,7 +400,8 @@ class TelegramBot(BaseBot, ABC):
     ):
 
         chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+        context.bot.send_message(
+            chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
         movie_names = self._tv_shows_service().discover(
             limit=limit,
@@ -405,13 +421,15 @@ class TelegramBot(BaseBot, ABC):
         else:
             text = 'Could not find any TV-shows for you 😞'
 
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        update.effective_message.reply_text(
+            text=text, reply_to_message_id=update.message.message_id)
 
     @command(name='get_movie_genres', description='Retrieves the available movies genres.')
     def get_movie_genres_command(self, update: Update, context: CallbackContext):
 
         chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+        context.bot.send_message(
+            chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
         movies_genres = self._movie_conversation().get_genres()
         if movies_genres:
@@ -419,13 +437,15 @@ class TelegramBot(BaseBot, ABC):
         else:
             text = f'Could not find any movie genres. 😞'
 
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        update.effective_message.reply_text(
+            text=text, reply_to_message_id=update.message.message_id)
 
     @command(name='get_tv_shows_genres', description='Retrieves the available TV-shows genres.')
     def get_tv_shows_genres_command(self, update: Update, context: CallbackContext):
 
         chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
+        context.bot.send_message(
+            chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
 
         tv_shows_genres = self._tv_shows_service().get_genres()
         if tv_shows_genres:
@@ -433,4 +453,5 @@ class TelegramBot(BaseBot, ABC):
         else:
             text = f'Could not find any TV-shows genres. 😞'
 
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        update.effective_message.reply_text(
+            text=text, reply_to_message_id=update.message.message_id)

@@ -1,7 +1,10 @@
 from abc import ABC
+
 from mr_knowledge_bot.bot.clients.base_client import parse_http_response
-from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import TheMovieDBBaseClient, poll_by_page_and_limit
-from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
+from mr_knowledge_bot.bot.clients.the_movie_db.movie_db_base_client import (
+    TheMovieDBBaseClient, poll_by_page_and_limit)
+from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import \
+    TheMovieDBMovieEntity
 
 
 class TheMovieDBMovieClient(TheMovieDBBaseClient, ABC):

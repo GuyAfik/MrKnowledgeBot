@@ -1,7 +1,8 @@
-from telegram import Update, ParseMode
+from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 
-from mr_knowledge_bot.bot.telegram.telegram_click.permission.base import Permission
+from mr_knowledge_bot.bot.telegram.telegram_click.permission.base import \
+    Permission
 from mr_knowledge_bot.bot.telegram.telegram_click.util import send_message
 
 

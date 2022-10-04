@@ -4,14 +4,20 @@ from typing import List
 
 from telegram import Update
 from telegram.ext import CallbackContext
+
 from mr_knowledge_bot.bot.telegram.telegram_click import CommandTarget
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument
 from mr_knowledge_bot.bot.telegram.telegram_click.const import *
-from mr_knowledge_bot.bot.telegram.telegram_click.error_handler import ErrorHandler, DEFAULT_ERROR_HANDLER
-from mr_knowledge_bot.bot.telegram.telegram_click.help import generate_help_message
-from mr_knowledge_bot.bot.telegram.telegram_click.parser import parse_telegram_command, split_command_from_args, split_command_from_target
-from mr_knowledge_bot.bot.telegram.telegram_click.permission.base import Permission
-from mr_knowledge_bot.bot.telegram.telegram_click.util import find_first, find_duplicates
+from mr_knowledge_bot.bot.telegram.telegram_click.error_handler import (
+    DEFAULT_ERROR_HANDLER, ErrorHandler)
+from mr_knowledge_bot.bot.telegram.telegram_click.help import \
+    generate_help_message
+from mr_knowledge_bot.bot.telegram.telegram_click.parser import (
+    parse_telegram_command, split_command_from_args, split_command_from_target)
+from mr_knowledge_bot.bot.telegram.telegram_click.permission.base import \
+    Permission
+from mr_knowledge_bot.bot.telegram.telegram_click.util import (find_duplicates,
+                                                               find_first)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -91,7 +97,8 @@ def _create_callback_wrapper(func: callable, help_message: str,
 
             try:
                 # parse command and arguments
-                cmd, parsed_args = parse_telegram_command(bot.username, message.text, arguments)
+                cmd, parsed_args = parse_telegram_command(
+                    bot.username, message.text, arguments)
             except ValueError as ex:
                 # error during argument parsing
                 logging.exception("Error parsing command arguments")
@@ -103,7 +110,8 @@ def _create_callback_wrapper(func: callable, help_message: str,
                 return
 
             # convert argument names to python param naming convention (snake-case)
-            kw_function_args = dict(map(lambda x: (x[0].lower().replace("-", "_"), x[1]), list(parsed_args.items())))
+            kw_function_args = dict(
+                map(lambda x: (x[0].lower().replace("-", "_"), x[1]), list(parsed_args.items())))
             # execute wrapped function
             return func(*args, **{**kw_function_args, **kwargs})
         except Exception as ex:
@@ -131,7 +139,8 @@ def check_command_name_clashes(names: List[str]):
     duplicates = find_duplicates(t)
     if len(duplicates) > 0:
         clashing = ", ".join(duplicates.keys())
-        raise ValueError("Command names must be unique! Clashing names: {}".format(clashing))
+        raise ValueError(
+            "Command names must be unique! Clashing names: {}".format(clashing))
 
 
 def check_argument_name_clashes(arguments: List[Argument]):
@@ -142,7 +151,8 @@ def check_argument_name_clashes(arguments: List[Argument]):
     duplicates = find_duplicates(list(map(lambda x: x.name, arguments)))
     if len(duplicates) > 0:
         clashing = ", ".join(duplicates.keys())
-        raise ValueError("Argument names must be unique per command! Clashing arguments: {}".format(clashing))
+        raise ValueError(
+            "Argument names must be unique per command! Clashing arguments: {}".format(clashing))
 
 
 def check_optional_argument_after_other(command_name: str, arguments: List[Argument]):

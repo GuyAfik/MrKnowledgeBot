@@ -1,6 +1,7 @@
 import logging
 
-from mr_knowledge_bot.bot.telegram.telegram_click.const import ARG_VALUE_SEPARATOR_CHAR
+from mr_knowledge_bot.bot.telegram.telegram_click.const import \
+    ARG_VALUE_SEPARATOR_CHAR
 from mr_knowledge_bot.bot.telegram.telegram_click.util import find_duplicates
 
 LOGGER = logging.getLogger(__name__)
@@ -46,7 +47,8 @@ class Argument:
             elif self.type is float:
                 self.converter = self._float_converter
             else:
-                raise ValueError("If you want to use a custom type, you have to provide a converter function too!")
+                raise ValueError(
+                    "If you want to use a custom type, you have to provide a converter function too!")
         else:
             self.converter = converter
         self.optional = optional
@@ -67,15 +69,18 @@ class Argument:
             if self.optional:
                 return self.default
             else:
-                raise ValueError("Missing required argument: '{}'".format(self.names[0]))
+                raise ValueError(
+                    "Missing required argument: '{}'".format(self.names[0]))
 
         parsed = self.converter(arg)
         if type(parsed) != self.type:
-            raise ValueError(f"invalid value for argument '{self.names[0]}': {arg}")
+            raise ValueError(
+                f"invalid value for argument '{self.names[0]}': {arg}")
 
         if self.validator is not None:
             if not self.validator(parsed):
-                raise ValueError("Invalid value for argument '{}': '{}'".format(self.names[0], arg))
+                raise ValueError(
+                    "Invalid value for argument '{}': '{}'".format(self.names[0], arg))
         return parsed
 
     @staticmethod
@@ -111,12 +116,14 @@ class Argument:
         """
         for name in self.names:
             if ARG_VALUE_SEPARATOR_CHAR in name:
-                raise ValueError("Argument names must not contain '=' character: {}".format(name))
+                raise ValueError(
+                    "Argument names must not contain '=' character: {}".format(name))
 
         duplicates = find_duplicates(self.names)
         if len(duplicates) > 0:
             clashing = ", ".join(duplicates.keys())
-            raise ValueError("Argument names must be unique! Clashing arguments: {}".format(clashing))
+            raise ValueError(
+                "Argument names must be unique! Clashing arguments: {}".format(clashing))
 
 
 class Flag(Argument):
@@ -130,7 +137,8 @@ class Flag(Argument):
         :param name: the name (or names) of the argument
         :param description: a short description of the argument
         """
-        super().__init__(name, description, example="", type=bool, flag=True, optional=True, default=False)
+        super().__init__(name, description, example="",
+                         type=bool, flag=True, optional=True, default=False)
 
 
 class Selection(Argument):

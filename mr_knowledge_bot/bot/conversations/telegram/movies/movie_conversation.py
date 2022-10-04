@@ -2,9 +2,12 @@
 
 from abc import ABC
 
+from telegram import (ParseMode, ReplyKeyboardMarkup, ReplyKeyboardRemove,
+                      Update)
 from telegram.ext import CallbackContext, ConversationHandler
-from telegram import Update, ReplyKeyboardMarkup, ParseMode, ReplyKeyboardRemove
-from mr_knowledge_bot.bot.conversations.telegram.conversation import Conversation
+
+from mr_knowledge_bot.bot.conversations.telegram.conversation import \
+    Conversation
 from mr_knowledge_bot.bot.services import MovieService
 
 
@@ -26,7 +29,8 @@ class TelegramMovieConversation(Conversation, ABC):
         chat_id = self._update.message.chat_id
         self._context.bot.send_message(chat_id, text=self.hang_on_message)
 
-        movies = self._movie_service.find_by_name(movie_name=name, limit=limit, sort_by=sort_by)
+        movies = self._movie_service.find_by_name(
+            movie_name=name, limit=limit, sort_by=sort_by)
         return self.display_movies(movies)
 
     def discover_movies_command(
@@ -60,7 +64,8 @@ class TelegramMovieConversation(Conversation, ABC):
 
     def display_movies(self, movies):
         if movies:
-            self._context.user_data['movies'] = movies  # save the found movies for next stages in the conversation.
+            # save the found movies for next stages in the conversation.
+            self._context.user_data['movies'] = movies
             movie_names = '\n'.join([movie.name for movie in movies])
             self._update.effective_message.reply_text(
                 text=f'Found the following movies for you 😀\n\n{movie_names}',

@@ -83,16 +83,19 @@ class MergedPermission(Permission):
         Evaluates all given permissions and combines their result using the given operator
         :return: reduced evaluation result
         """
-        evaluations = list(map(lambda x: x.evaluate(update, context), self.permissions))
+        evaluations = list(map(lambda x: x.evaluate(
+            update, context), self.permissions))
         return reduce(lambda x, y: self.op(x, y), evaluations)
 
     def __str__(self):
-        permission_class_names = list(map(lambda x: x.__str__(), self.permissions))
+        permission_class_names = list(
+            map(lambda x: x.__str__(), self.permissions))
         string = " {} ".format(self.op.__name__).join(permission_class_names)
         return "({})".format(string)
 
     def __repr__(self):
-        permission_class_names = list(map(lambda x: x.__repr__(), self.permissions))
+        permission_class_names = list(
+            map(lambda x: x.__repr__(), self.permissions))
         repr = " {} ".format(self.op.__name__[1:]).join(permission_class_names)
         return "<{}>".format(repr)
 

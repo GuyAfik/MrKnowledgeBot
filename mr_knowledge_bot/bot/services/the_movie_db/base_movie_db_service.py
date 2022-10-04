@@ -1,5 +1,7 @@
 from abc import ABC
-from mr_knowledge_bot.bot.services.base_movie_tv_show_service import BaseMoviesTVShowsService
+
+from mr_knowledge_bot.bot.services.base_movie_tv_show_service import \
+    BaseMoviesTVShowsService
 
 
 class TheMovieDBBaseService(BaseMoviesTVShowsService, ABC):

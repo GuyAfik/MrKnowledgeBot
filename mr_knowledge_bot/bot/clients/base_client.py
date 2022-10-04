@@ -1,13 +1,16 @@
-from abc import ABC, abstractmethod
 import logging
+from abc import ABC, abstractmethod
 from json.decoder import JSONDecodeError
 from types import SimpleNamespace
-from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import TheMovieDBTVShowEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
+from typing import Any, Optional, Type
+
 from mr_knowledge_bot.bot.entites.base_entity import BaseEntity
-from typing import Type, Optional, Any
+from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
+from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import \
+    TheMovieDBMovieEntity
+from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import \
+    TheMovieDBTVShowEntity
+from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
 
 logger = logging.getLogger('knowledge-bot')
 
@@ -90,7 +93,8 @@ def parse_http_response(
         )
 
     if response_type == 'class' and not _class_type:
-        raise ValueError('_class_type must be provided when "response_type" = class')
+        raise ValueError(
+            '_class_type must be provided when "response_type" = class')
 
     _class_type_to_entity = {
         TheMovieDBTVShowEntity: response_to_tv_show_entities,
@@ -102,7 +106,8 @@ def parse_http_response(
     def decorator(func):
         def wrapper(self, *args, **kwargs):
             # response type will override the response of the class.
-            logger.debug(f'Sending HTTP request using function {func.__name__} with {args=}, {kwargs=}')
+            logger.debug(
+                f'Sending HTTP request using function {func.__name__} with {args=}, {kwargs=}')
             print(args, kwargs)
             http_response = func(self, *args, **kwargs)
 

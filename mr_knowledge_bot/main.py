@@ -2,7 +2,6 @@
 from mr_knowledge_bot.bot import Bot
 from mr_knowledge_bot.bot.clients import MovieClient, TVShowsClient
 
-
 if __name__ == '__main__':
     bot = Bot()
     bot.start()

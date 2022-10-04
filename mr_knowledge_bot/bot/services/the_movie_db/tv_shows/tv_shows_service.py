@@ -1,8 +1,11 @@
-import dateparser
-from datetime import datetime
-from mr_knowledge_bot.bot.clients import TVShowsClient
 from abc import ABC
-from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import TheMovieDBBaseService
+from datetime import datetime
+
+import dateparser
+
+from mr_knowledge_bot.bot.clients import TVShowsClient
+from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import \
+    TheMovieDBBaseService
 
 
 class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
@@ -14,7 +17,8 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
         """
         Find TV shows by name.
         """
-        tv_shows = super().find_by_name(tv_show_name=tv_show_name, limit=limit, sort_by=sort_by)
+        tv_shows = super().find_by_name(
+            tv_show_name=tv_show_name, limit=limit, sort_by=sort_by)
 
         if sort_by == 'rating':
             sort_by = 'vote_average'
@@ -22,7 +26,8 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
             sort_by = 'first_air_date'
 
         if len(tv_shows) > limit:
-            tv_shows = sorted(tv_shows, key=lambda d: d.get(sort_by), reverse=True)[:limit]
+            tv_shows = sorted(tv_shows, key=lambda d: d.get(
+                sort_by), reverse=True)[:limit]
 
         return '\n'.join([tv_show.get('name') for tv_show in tv_shows])
 
@@ -54,12 +59,14 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
             if before_date:
                 if parsed_before_data := dateparser.parse(before_date):
                     # log out what the date is before and after parsing
-                    _filters['first_air_date.lte'] = parsed_before_data.strftime('%Y-%m-%d')
+                    _filters['first_air_date.lte'] = parsed_before_data.strftime(
+                        '%Y-%m-%d')
 
             if after_date:
                 if parsed_after_date := dateparser.parse(after_date):
                     # log out what the date is before and after parsing
-                    _filters['first_air_date.gte'] = parsed_after_date.strftime('%Y-%m-%d')
+                    _filters['first_air_date.gte'] = parsed_after_date.strftime(
+                        '%Y-%m-%d')
 
             if with_genres and (genre_ids := self.genre_names_to_ids(with_genres)):
                 _filters['with_genres'] = genre_ids
@@ -77,18 +84,23 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
 
         tv_shows = super().discover(**_set_up_body_request())
 
-        if not not_released:  # remove tv-shows which were not released yet or don't have any release-date.
+        # remove tv-shows which were not released yet or don't have any release-date.
+        if not not_released:
             tv_shows = [
                 tv_show for tv_show in tv_shows if tv_show.release_date and
-                dateparser.parse(tv_show.release_date).strftime('%Y-%m-%d') < datetime.now().strftime('%Y-%m-%d')
+                dateparser.parse(tv_show.release_date).strftime(
+                    '%Y-%m-%d') < datetime.now().strftime('%Y-%m-%d')
             ]
 
         if sort_by == 'popularity':
-            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None))
+            tv_shows = sorted(tv_shows, key=lambda tv_show: (
+                tv_show.release_date, tv_show.release_date is not None))
         elif sort_by == 'first_air_date':
-            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None))
+            tv_shows = sorted(tv_shows, key=lambda tv_show: (
+                tv_show.release_date, tv_show.release_date is not None))
         elif sort_by == 'rating':
-            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None))
+            tv_shows = sorted(tv_shows, key=lambda tv_show: (
+                tv_show.rating, tv_show.rating is not None))
 
         if len(tv_shows) > limit:
             tv_shows = tv_shows[:limit]

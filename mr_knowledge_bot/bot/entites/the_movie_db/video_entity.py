@@ -28,4 +28,3 @@ class VideoEntity(TheMovieDBBaseEntity):
             platform = f'https://www.youtube.com/watch?v=' if self.site.lower() == 'youtube' else 'https://vimeo.com/'
             return f'{platform}{self.key}'
         return ''
-

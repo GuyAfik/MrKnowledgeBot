@@ -1,5 +1,7 @@
-from mr_knowledge_bot.bot.telegram.telegram_click.permission.chat import _PrivateChat, _GroupChat, _SuperGroupChat
-from mr_knowledge_bot.bot.telegram.telegram_click.permission.user import _GroupCreator, _GroupAdmin, _UserId, _UserName, _Nobody, _Anybody
+from mr_knowledge_bot.bot.telegram.telegram_click.permission.chat import (
+    _GroupChat, _PrivateChat, _SuperGroupChat)
+from mr_knowledge_bot.bot.telegram.telegram_click.permission.user import (
+    _Anybody, _GroupAdmin, _GroupCreator, _Nobody, _UserId, _UserName)
 
 PRIVATE_CHAT = _PrivateChat()
 NORMAL_GROUP_CHAT = _GroupChat()
