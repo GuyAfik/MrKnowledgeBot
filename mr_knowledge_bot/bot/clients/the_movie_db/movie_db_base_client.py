@@ -3,7 +3,9 @@ import requests
 from abc import ABC, abstractmethod
 
 from mr_knowledge_bot.bot.clients.base_client import BaseClient
-from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import Genre
+from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
+from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
+from mr_knowledge_bot.bot.clients.base_client import parse_http_response
 
 
 def poll_by_page_and_limit(limit=500):
@@ -30,7 +32,8 @@ def poll_by_page_and_limit(limit=500):
 
 class TheMovieDBBaseClient(BaseClient, ABC):
     BASE_URL = os.getenv('MOVIE_BASE_URL')
-    genre_entity = Genre
+    genre_entity = GenreEntity
+    video_entity = VideoEntity
 
     def __init__(self, token=None, base_url=None, verify=True):
         super().__init__(
@@ -43,6 +46,12 @@ class TheMovieDBBaseClient(BaseClient, ABC):
         params.update({'api_key': self.token})
         return requests.request('GET', f'{self.base_url}{url}', params=params, verify=self.verify)
 
+    @parse_http_response(_class_type=video_entity)
+    def get_videos(self, _id, _type):
+        if _type not in ('movie', 'tv'):
+            raise ValueError(f'{_type} can be only "movie" or "tv"')
+        return self.get(url=f'/{_type}/{_id}/videos')
+
     @abstractmethod
     def search(self, **kwargs):
         pass
@@ -54,3 +63,4 @@ class TheMovieDBBaseClient(BaseClient, ABC):
     @abstractmethod
     def discover(self, **kwargs):
         pass
+

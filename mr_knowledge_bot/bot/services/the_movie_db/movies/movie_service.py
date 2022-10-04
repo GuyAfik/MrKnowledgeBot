@@ -1,13 +1,12 @@
 import dateparser
 from datetime import datetime
 from mr_knowledge_bot.bot.clients import MovieClient
-from mr_knowledge_bot.bot.logic.movies.the_movie_db.base_movie_db_logic import TheMovieDBBaseLogic
+from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import TheMovieDBBaseService
 from abc import ABC
 from telegram.ext import CallbackContext
-from telegram import ReplyKeyboardMarkup
 
 
-class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
+class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
 
     def __init__(self, movies=None):
         super().__init__(client=MovieClient())
@@ -105,15 +104,7 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
         if len(movies) > limit:
             movies = movies[:limit]
 
-        return '\n'.join([movie.name for movie in movies])
-
-    def choose_movie(self, answer):
-        if answer == 'n':  # user does not want to see movie overview
-            return None
-        # user wants to see the movie overview
-        return ReplyKeyboardMarkup.from_column(
-            [movie.name for movie in self.movies], resize_keyboard=True, one_time_keyboard=True
-        )
+        return movies
 
     def get_movie_overview(self, chosen_movie):
         """
@@ -123,3 +114,16 @@ class TheMovieDBMovieLogic(TheMovieDBBaseLogic, ABC):
             if chosen_movie == movie.name:
                 return movie.overview
         return None
+
+    def get_trailer(self, chosen_movie):
+        """
+        Returns a trailer of a movie.
+        """
+        for movie in self.movies:
+            if chosen_movie == movie.name:
+                for video in self._client.get_videos(_id=movie.id):
+                    if trailer_video := str(video):
+                        return trailer_video
+            return ''
+        return None
+

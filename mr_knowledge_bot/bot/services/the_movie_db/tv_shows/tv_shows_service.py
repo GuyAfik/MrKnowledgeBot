@@ -2,10 +2,10 @@ import dateparser
 from datetime import datetime
 from mr_knowledge_bot.bot.clients import TVShowsClient
 from abc import ABC
-from mr_knowledge_bot.bot.logic.movies.the_movie_db.base_movie_db_logic import TheMovieDBBaseLogic
+from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import TheMovieDBBaseService
 
 
-class TheMovieDBTVShowLogic(TheMovieDBBaseLogic, ABC):
+class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
 
     def __init__(self):
         super().__init__(client=TVShowsClient())
