@@ -1,10 +1,10 @@
+from mr_knowledge_bot.bot.entites.the_movie_db.base import TheMovieDBBaseEntity
 
 
-class VideoEntity:
+class VideoEntity(TheMovieDBBaseEntity):
 
-    def __init__(self, name, _id, _type, key, published_at, site, is_official):
-        self.name = name
-        self.id = _id
+    def __init__(self, _id, name, _type, key, published_at, site, is_official):
+        super().__init__(_id, name)
         self.type = _type
         self.key = key
         self.published_at = published_at
