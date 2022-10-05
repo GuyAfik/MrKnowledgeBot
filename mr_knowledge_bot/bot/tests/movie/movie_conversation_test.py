@@ -21,7 +21,7 @@ def movie_conversation_no_repeat(mocker, telegram_context, telegram_update) -> M
     def get_movies_from_context_side_effect_with_no_repeat(key):
         if key == 'movies':
             return response_to_movie_entities(
-                load_json('test_data/search_movies_response.json')[0]
+                load_json('mr_knowledge_bot/bot/tests/movie/test_data/search_movies_response.json')[0]
             )
         return None
 
@@ -36,7 +36,7 @@ def movie_conversation_with_repeat(mocker, telegram_context, telegram_update) ->
     def get_movies_from_context_side_effect_with_repeat(key):
         if key == 'movies':
             return response_to_movie_entities(
-                load_json('test_data/search_movies_response.json')[0]
+                load_json('mr_knowledge_bot/bot/tests/movie/test_data/search_movies_response.json')[0]
             )
         elif key == 'repeat':
             return True
