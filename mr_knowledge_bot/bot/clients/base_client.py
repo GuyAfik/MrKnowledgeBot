@@ -20,18 +20,33 @@ class ApiResponse(SimpleNamespace):
     pass
 
 
+def is_english_letters_movie(name: str):
+    try:
+        name.encode(encoding='utf-8').decode('ascii')
+    except UnicodeDecodeError:
+        return False
+    else:
+        return True
+
+
 def response_to_tv_show_entities(response: dict):
     if 'results' not in response:
         return TheMovieDBTVShowEntity.from_response(response)
     results = response.get('results') or []
-    return [TheMovieDBTVShowEntity.from_response(result) for result in results]
+    return [
+        TheMovieDBTVShowEntity.from_response(result)
+        for result in results if is_english_letters_movie(result.get('name'))
+    ]
 
 
 def response_to_movie_entities(response: dict):
     if 'results' not in response:
         return TheMovieDBMovieEntity.from_response(response)
     results = response.get('results') or []
-    return [TheMovieDBMovieEntity.from_response(result) for result in results]
+    return [
+        TheMovieDBMovieEntity.from_response(result)
+        for result in results if is_english_letters_movie(result.get('name'))
+    ]
 
 
 def response_to_video_entities(response: dict):
