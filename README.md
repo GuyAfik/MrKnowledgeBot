@@ -2,6 +2,12 @@
 
 This is a telegram bot which provides information about movies/tv-shows.
 
+## Running example
+This is an example of a conversation that the */find_movies_by_name* command triggers.
+
+https://user-images.githubusercontent.com/53861351/194077219-2104c1d6-bae9-471a-b45a-1b2a561a0654.mp4
+
+
 ## Supported commands
 - */help* - List the commands supported by the MrKnowledgeBot.
 - */find_movies_by_name* - Allows you to find movies by name, query for movie details and trailer if exist.
