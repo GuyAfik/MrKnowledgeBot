@@ -1,10 +1,10 @@
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
-from telegram import Update, ParseMode, ReplyKeyboardRemove
+from telegram import Update, ParseMode
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
-from mr_knowledge_bot.bot.conversations import MovieConversation
+from mr_knowledge_bot.bot.conversations import MovieConversation, TVShowConversation
 from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
 
 
@@ -13,8 +13,8 @@ class TelegramBot(BaseBot, ABC):
     def __init__(self, token=None):
         super().__init__(token)
         self._updater = Updater(token=self.token, use_context=True)
-
         self._movie_conversation = MovieConversation
+        self._tv_show_conversation = TVShowConversation
 
         movies_conversation_handler = ConversationHandler(
             entry_points=[
@@ -23,10 +23,10 @@ class TelegramBot(BaseBot, ABC):
             ],
             states={
                 self._movie_conversation.query_movie_details_stage: [
-                    CallbackQueryHandler(callback=self.query_movie_overview)
+                    CallbackQueryHandler(callback=self.query_movie_details)
                 ],
                 self._movie_conversation.display_movie_details_stage: [
-                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_movie_overview)
+                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_movie_details)
                 ],
                 self._movie_conversation.query_movie_for_trailer_stage: [
                     CallbackQueryHandler(callback=self.query_movie_trailer)
@@ -39,14 +39,38 @@ class TelegramBot(BaseBot, ABC):
             allow_reentry=True
         )
 
+        tv_show_conversation_handler = ConversationHandler(
+            entry_points=[
+                CommandHandler(command='find_tv_shows_by_name', callback=self.find_tv_shows_by_name_command),
+                CommandHandler(command='discover_tv_shows', callback=self.discover_tv_shows_command)
+            ],
+            states={
+                self._tv_show_conversation.query_tv_show_details_stage: [
+                    CallbackQueryHandler(callback=self.query_tv_show_details)
+                ],
+                self._tv_show_conversation.display_tv_show_details_stage: [
+                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_tv_show_details)
+                ],
+                self._tv_show_conversation.query_tv_show_season_stage: [
+                    CallbackQueryHandler(callback=self.query_tv_show_season)
+                ],
+                self._tv_show_conversation.display_tv_show_season_stage: [
+                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_tv_show_season)
+                ],
+                self._tv_show_conversation.display_tv_show_trailer_stage: [
+                    CallbackQueryHandler(callback=self.display_tv_show_trailer)
+                ]
+            },
+            fallbacks=[MessageHandler(filters=Filters.regex('^exit$'), callback=self.cancel_conversation)]
+        )
+
         handler_groups = {
             0: [
                 CommandHandler(command='help', callback=self.help_command),
                 movies_conversation_handler,
-                # CommandHandler(command='find_tv_shows_by_name', callback=self.find_tv_shows_by_name_command),
-                # CommandHandler(command='discover_tv_shows', callback=self.discover_tv_shows_command),
-                # CommandHandler(command='get_movie_genres', callback=self.get_movie_genres_command),
-                # CommandHandler(command='get_tv_shows_genres', callback=self.get_tv_shows_genres_command)
+                tv_show_conversation_handler,
+                CommandHandler(command='get_movie_genres', callback=self.get_movie_genres_command),
+                CommandHandler(command='get_tv_shows_genres', callback=self.get_tv_shows_genres_command)
             ],
             # 1: [
             #     MessageHandler(Filters.text & ~Filters.command, callback=self._unknown_command)
@@ -226,10 +250,10 @@ class TelegramBot(BaseBot, ABC):
             not_released=not_released
         )
 
-    def query_movie_overview(self, update: Update, context: CallbackContext):
+    def query_movie_details(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).query_movie_details()
 
-    def display_movie_overview(self, update: Update, context: CallbackContext):
+    def display_movie_details(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).display_movie_details()
 
     def query_movie_trailer(self, update: Update, context: CallbackContext):
@@ -273,16 +297,9 @@ class TelegramBot(BaseBot, ABC):
     def find_tv_shows_by_name_command(
         self, update: Update, context: CallbackContext, name: str, limit: int, sort_by: str
     ):
-        chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
-
-        tv_shows_names = self._tv_shows_service().find_by_name(tv_show_name=name, limit=limit, sort_by=sort_by)
-        if tv_shows_names:
-            text = f'Found the following tv-shows for you 😀\n\n{tv_shows_names}'
-        else:
-            text = f'Could not find any tv-shows similar to the name "{name}" 😞'
-
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        return self._tv_show_conversation(update, context).find_tv_shows_by_name_command(
+            tv_show_name=name, limit=limit, sort_by=sort_by
+        )
 
     @command(
         name='discover_tv_shows',
@@ -406,6 +423,21 @@ class TelegramBot(BaseBot, ABC):
             text = 'Could not find any TV-shows for you 😞'
 
         update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+
+    def query_tv_show_details(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).query_tv_show_details()
+
+    def display_tv_show_details(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).display_tv_show_details()
+
+    def query_tv_show_season(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).query_specific_tv_show_season()
+
+    def display_tv_show_season(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).display_tv_show_season()
+
+    def display_tv_show_trailer(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).display_tv_show_trailer()
 
     @command(name='get_movie_genres', description='Retrieves the available movies genres.')
     def get_movie_genres_command(self, update: Update, context: CallbackContext):

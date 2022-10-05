@@ -9,7 +9,7 @@ class TheMovieDBTVShowsClient(TheMovieDBBaseClient, ABC):
     tv_show_entity = TheMovieDBTVShowEntity
 
     @poll_by_page_and_limit()
-    @parse_http_response(response_type='json', keys=['results'])
+    @parse_http_response(_class_type=tv_show_entity)
     def search(self, **kwargs):
         """
         Searches for movies with a specific name.
@@ -33,3 +33,10 @@ class TheMovieDBTVShowsClient(TheMovieDBBaseClient, ABC):
     @parse_http_response(_class_type=TheMovieDBBaseClient.genre_entity)
     def get_genres(self):
         return self.get(url='/genre/tv/list')
+
+    @parse_http_response(_class_type=tv_show_entity)
+    def get_details(self, _id, _type='tv'):
+        return super().get_details(_id=_id, _type=_type)
+
+    def get_videos(self, _id, _type='tv'):
+        return super().get_videos(_id, _type)

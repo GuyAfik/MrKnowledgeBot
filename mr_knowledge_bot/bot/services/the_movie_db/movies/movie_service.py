@@ -118,8 +118,8 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
             return ''
         return None
 
-    def get_movie_details(self, chosen_movie):
+    def get_details(self, chosen_movie):
         for movie in self.movies:
             if chosen_movie == movie.name:
-                return super().get_movie_details(movie_id=movie.id)
+                return super().get_details(_id=movie.id)
         return None
