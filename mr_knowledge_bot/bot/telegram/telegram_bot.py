@@ -400,11 +400,7 @@ class TelegramBot(BaseBot, ABC):
         with_status: str = None,
         not_released: bool = None
     ):
-
-        chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
-
-        movie_names = self._tv_shows_service().discover(
+        return self._tv_show_conversation(update, context).discover_tv_shows_command(
             limit=limit,
             sort_by=sort_by,
             before_date=before_date,
@@ -416,13 +412,6 @@ class TelegramBot(BaseBot, ABC):
             with_status=with_status,
             not_released=not_released
         )
-
-        if movie_names:
-            text = f'Found the following TV-shows for you 😀\n\n{movie_names}'
-        else:
-            text = 'Could not find any TV-shows for you 😞'
-
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
 
     def query_tv_show_details(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).query_tv_show_details()

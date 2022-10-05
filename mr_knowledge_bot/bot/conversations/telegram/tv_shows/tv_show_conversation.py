@@ -26,6 +26,37 @@ class TelegramTVShowConversation(Conversation, ABC):
         tv_shows = self._tv_shows_service.find_by_name(tv_show_name=tv_show_name, limit=limit, sort_by=sort_by)
         return self.display_tv_shows(tv_shows)
 
+    def discover_tv_shows_command(
+        self,
+        limit=20,
+        sort_by=None,
+        before_date=None,
+        after_date=None,
+        with_genres=None,
+        without_genres=None,
+        before_runtime=None,
+        after_runtime=None,
+        with_status=None,
+        not_released=None
+    ):
+        chat_id = self.update.message.chat_id
+        self.context.bot.send_message(chat_id, text=self.hang_on_message)
+
+        tv_shows = self._tv_shows_service.discover(
+            limit=limit,
+            sort_by=sort_by,
+            before_date=before_date,
+            after_date=after_date,
+            with_genres=with_genres,
+            without_genres=without_genres,
+            before_runtime=before_runtime,
+            after_runtime=after_runtime,
+            with_status=with_status,
+            not_released=not_released
+        )
+
+        return self.display_tv_shows(tv_shows)
+
     def display_tv_shows(self, tv_shows):
         if tv_shows:
             self._context.user_data['tv_shows'] = tv_shows  # save the found movies for next stages in the conversation.

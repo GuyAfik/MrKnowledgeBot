@@ -107,7 +107,7 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
         if len(tv_shows) > limit:
             tv_shows = tv_shows[:limit]
 
-        return '\n'.join([tv_show.name for tv_show in tv_shows])
+        return tv_shows
 
     def get_details(self, chosen_tv_show):
         for tv_show in self.tv_shows:
