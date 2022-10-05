@@ -28,7 +28,7 @@ class VideoEntity(TheMovieDBBaseEntity):
         ]
 
     def __str__(self):
-        if self.type == 'Trailer' and self.is_official:
+        if self.type.lower() == 'trailer' and self.is_official:
             platform = f'https://www.youtube.com/watch?v=' if self.site.lower() == 'youtube' else 'https://vimeo.com/'
             return f'{platform}{self.key}'
         return ''

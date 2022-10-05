@@ -9,9 +9,9 @@ if __name__ == '__main__':
 
     c = TVShowsClient()
     v = c.search(tv_show_name='game of thrones')
-    game_of_thrones_id = '1399'
+    house_of_dragon_id = '94997'
 
-    d = c.get_videos(_id=game_of_thrones_id)
+    d = c.get_videos(_id=house_of_dragon_id)
 
     # d = c.get_details(_id=game_of_thrones_id)
 

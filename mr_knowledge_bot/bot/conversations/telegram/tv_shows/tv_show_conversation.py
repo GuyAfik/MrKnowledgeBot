@@ -192,9 +192,6 @@ class TelegramTVShowConversation(Conversation, ABC):
         chosen_season_number = int(self._update.message.text)
         self.context.user_data['season_number'] = chosen_season_number
 
-        print(chosen_season_number)
-        print(chosen_tv_show)
-
         if tv_season := self._tv_shows_service.get_tv_show_season(
             chosen_tv_show=chosen_tv_show,
             chosen_tv_season=chosen_season_number
@@ -237,18 +234,18 @@ class TelegramTVShowConversation(Conversation, ABC):
         return self.display_tv_show_trailer_stage
 
     def display_tv_show_trailer(self):
-        chosen_movie_name = self.context.user_data.get('chosen_tv_show')
+        chosen_tv_show = self.context.user_data.get('chosen_tv_show')
         if self._update.callback_query.data == 'y':
-            if tv_show_trailer := self._tv_shows_service.get_trailer(chosen_movie_name):
+            if tv_show_trailer := self._tv_shows_service.get_trailer(chosen_tv_show):
                 self._update.effective_message.reply_text(
-                    text=f'[{chosen_movie_name} - (Trailer)]({tv_show_trailer})',
+                    text=f'[{chosen_tv_show} - (Trailer)]({tv_show_trailer})',
                     reply_to_message_id=self.get_message_id(),
                     parse_mode=ParseMode.MARKDOWN,
                     reply_markup=ReplyKeyboardRemove()
                 )
             else:
                 self._update.effective_message.reply_text(
-                    text=f'Could not find trailer for movie "{chosen_movie_name}"',
+                    text=f'Could not find trailer for movie "{chosen_tv_show}"',
                     reply_to_message_id=self.get_message_id(),
                     reply_markup=ReplyKeyboardRemove()
                 )

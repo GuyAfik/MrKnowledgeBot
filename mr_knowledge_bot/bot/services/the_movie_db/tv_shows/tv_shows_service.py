@@ -128,13 +128,13 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
 
     def get_trailer(self, chosen_tv_show):
         """
-        Returns a trailer of a movie.
+        Returns a trailer of a tv-show.
         """
         for tv_show in self.tv_shows:
             if chosen_tv_show == tv_show.name:
                 for video in self._client.get_videos(_id=tv_show.id):
                     if trailer_video := str(video):
                         return trailer_video
-            return ''
+                return ''
         return None
 
