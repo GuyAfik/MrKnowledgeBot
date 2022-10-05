@@ -64,7 +64,11 @@ def test_find_movies_by_name_command(mocker, movie_conversation_no_repeat):
     api_response = requests.Response()
     api_response.status_code = 200
 
-    mocker.patch.object(api_response, 'json', side_effect=load_json('test_data/search_movies_response.json'))
+    mocker.patch.object(
+        api_response,
+        'json',
+        side_effect=load_json('mr_knowledge_bot/bot/tests/movie/test_data/search_movies_response.json')
+    )
     mocker.patch.object(requests, 'request', return_value=api_response)
 
     next_stage = movie_conversation_no_repeat.find_movies_by_name_command(name='escape', limit=5, sort_by='popularity')
@@ -173,7 +177,11 @@ def test_display_movie_with_valid_movie(mocker, movie_conversation_no_repeat):
     api_response = requests.Response()
     api_response.status_code = 200
 
-    mocker.patch.object(api_response, 'json', return_value=load_json('test_data/movie_details_response.json'))
+    mocker.patch.object(
+        api_response,
+        'json',
+        return_value=load_json('mr_knowledge_bot/bot/tests/movie/test_data/movie_details_response.json')
+    )
     mocker.patch.object(requests, 'request', return_value=api_response)
 
     movie_conversation_no_repeat.update.message.text = 'Escape Plan 2: Hades'
