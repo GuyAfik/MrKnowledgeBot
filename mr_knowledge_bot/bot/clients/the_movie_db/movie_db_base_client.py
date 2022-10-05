@@ -31,13 +31,13 @@ def poll_by_page_and_limit(limit=500):
 
 
 class TheMovieDBBaseClient(BaseClient, ABC):
-    BASE_URL = os.getenv('MOVIE_BASE_URL')
+    BASE_URL = os.getenv('THE_MOVIE_DB_BASE_URL')
     genre_entity = GenreEntity
     video_entity = VideoEntity
 
     def __init__(self, token=None, base_url=None, verify=True):
         super().__init__(
-            token=token or os.getenv('API_MOVIE_TOKEN'), base_url=base_url or self.BASE_URL, verify=verify
+            token=token or os.getenv('THE_MOVIE_DB_API_TOKEN'), base_url=base_url or self.BASE_URL, verify=verify
         )
 
     def get(self, url, params=None):
