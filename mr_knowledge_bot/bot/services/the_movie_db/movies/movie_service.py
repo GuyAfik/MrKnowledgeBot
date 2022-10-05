@@ -115,7 +115,7 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
                 for video in self._client.get_videos(_id=movie.id):
                     if trailer_video := str(video):
                         return trailer_video
-            return ''
+                return ''
         return None
 
     def get_details(self, chosen_movie):
