@@ -1,0 +1,106 @@
+{
+   "adult":false,
+   "backdrop_path":"/xIAaN3AQqaJiN5RJ0WsmBady8Hq.jpg",
+   "belongs_to_collection":{
+      "id":525891,
+      "name":"Escape Plan Collection",
+      "poster_path":"/yzYPg7GiB8oZOpT6QTWRVPGaGdC.jpg",
+      "backdrop_path":"/zQao2h92RYNmhqCvmiReIHcz3Xp.jpg"
+   },
+   "budget":20000000,
+   "genres":[
+      {
+         "id":28,
+         "name":"Action"
+      }
+   ],
+   "homepage":"https://www.escapeplan2.movie/",
+   "id":440471,
+   "imdb_id":"tt6513656",
+   "original_language":"en",
+   "original_title":"Escape Plan 2: Hades",
+   "overview":"Ray Breslin manages an elite team of security specialists trained in the art of breaking people out of the world's most impenetrable prisons. When his most trusted operative, Shu Ren, is kidnapped and disappears inside the most elaborate prison ever built, Ray must track him down with the help of some of his former friends.",
+   "popularity":43.557,
+   "poster_path":"/A6tb8JNrie2qT8JC2tGqshayuck.jpg",
+   "production_companies":[
+      {
+         "id":491,
+         "logo_path":"/rUp0lLKa1pr4UsPm8fgzmnNGxtq.png",
+         "name":"Summit Entertainment",
+         "origin_country":"US"
+      },
+      {
+         "id":1632,
+         "logo_path":"/cisLn1YAUuptXVBa0xjq7ST9cH0.png",
+         "name":"Lionsgate",
+         "origin_country":"US"
+      },
+      {
+         "id":3604,
+         "logo_path":"/jC6Hk3ZyNRlVPJsA0xGlAhgd2RP.png",
+         "name":"Grindstone Entertainment Group",
+         "origin_country":"US"
+      },
+      {
+         "id":10405,
+         "logo_path":"None",
+         "name":"EFO Films",
+         "origin_country":"US"
+      },
+      {
+         "id":36109,
+         "logo_path":"/wca0Jcidf2N1KAPicYMjGoKOmYu.png",
+         "name":"The Fyzz",
+         "origin_country":"GB"
+      },
+      {
+         "id":76991,
+         "logo_path":"/pQjdvbv4y9yuIDSHDEHc9ijJKaS.png",
+         "name":"Highland Film Group",
+         "origin_country":"US"
+      },
+      {
+         "id":90968,
+         "logo_path":"None",
+         "name":"Leomus Pictures",
+         "origin_country":"CN"
+      },
+      {
+         "id":154033,
+         "logo_path":"None",
+         "name":"Plastic Fish Productions",
+         "origin_country":""
+      }
+   ],
+   "production_countries":[
+      {
+         "iso_3166_1":"CN",
+         "name":"China"
+      },
+      {
+         "iso_3166_1":"US",
+         "name":"United States of America"
+      }
+   ],
+   "release_date":"2018-06-05",
+   "revenue":17500000,
+   "runtime":96,
+   "spoken_languages":[
+      {
+         "english_name":"Italian",
+         "iso_639_1":"it",
+         "name":"Italiano"
+      },
+      {
+         "english_name":"English",
+         "iso_639_1":"en",
+         "name":"English"
+      }
+   ],
+   "status":"Released",
+   "tagline":"He's back.",
+   "title":"Escape Plan 2: Hades",
+   "video":false,
+   "vote_average":5.092,
+   "vote_count":1175
+}

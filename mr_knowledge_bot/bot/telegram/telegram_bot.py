@@ -227,7 +227,7 @@ class TelegramBot(BaseBot, ABC):
         )
 
     def query_movie_overview(self, update: Update, context: CallbackContext):
-        return self._movie_conversation(update, context).query_movie_overview()
+        return self._movie_conversation(update, context).query_movie_details()
 
     def display_movie_overview(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).display_movie_details()

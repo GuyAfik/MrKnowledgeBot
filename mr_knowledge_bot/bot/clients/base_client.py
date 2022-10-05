@@ -26,7 +26,6 @@ def response_to_tv_show_entities(response: dict):
 
 
 def response_to_movie_entities(response: dict):
-
     if 'results' not in response:
         return TheMovieDBMovieEntity.from_response(response)
     results = response.get('results') or []
@@ -103,7 +102,6 @@ def parse_http_response(
         def wrapper(self, *args, **kwargs):
             # response type will override the response of the class.
             logger.debug(f'Sending HTTP request using function {func.__name__} with {args=}, {kwargs=}')
-            print(args, kwargs)
             http_response = func(self, *args, **kwargs)
 
             if http_response.status_code != expected_valid_code:
