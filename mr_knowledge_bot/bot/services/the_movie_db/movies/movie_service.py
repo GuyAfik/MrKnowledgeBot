@@ -26,11 +26,15 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
         movies = super().find_by_name(movie_name=movie_name, limit=limit, sort_by=sort_by)
         if len(movies) > limit:
             if sort_by == 'popularity':
-                movies = sorted(movies, key=lambda movie: (movie.release_date, movie.release_date is not None))
+                movies = sorted(
+                    movies, key=lambda movie: (movie.release_date, movie.release_date is not None), reverse=True
+                )
             elif sort_by == 'release_date':
-                movies = sorted(movies, key=lambda movie: (movie.release_date, movie.release_date is not None))
+                movies = sorted(
+                    movies, key=lambda movie: (movie.release_date, movie.release_date is not None), reverse=True
+                )
             elif sort_by == 'rating':
-                movies = sorted(movies, key=lambda movie: (movie.rating, movie.rating is not None))
+                movies = sorted(movies, key=lambda movie: (movie.rating, movie.rating is not None), reverse=True)
 
             movies = movies[:limit]
 
@@ -95,11 +99,17 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
             ]
 
         if sort_by == 'popularity':
-            movies = sorted(movies, key=lambda movie: (movie.release_date, movie.release_date is not None))
+            movies = sorted(
+                movies, key=lambda movie: (movie.release_date, movie.release_date is not None), reverse=True
+            )
         elif sort_by == 'release_date':
-            movies = sorted(movies, key=lambda movie: (movie.release_date, movie.release_date is not None))
+            movies = sorted(
+                movies, key=lambda movie: (movie.release_date, movie.release_date is not None), reverse=True
+            )
         elif sort_by == 'rating':
-            movies = sorted(movies, key=lambda movie: (movie.rating, movie.rating is not None))
+            movies = sorted(
+                movies, key=lambda movie: (movie.rating, movie.rating is not None), reverse=True
+            )
 
         if len(movies) > limit:
             movies = movies[:limit]
