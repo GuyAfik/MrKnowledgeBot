@@ -13,15 +13,19 @@ class VideoEntity(TheMovieDBBaseEntity):
 
     @classmethod
     def from_response(cls, response):
-        return cls(
-            name=response.get('name'),
-            _id=response.get('id'),
-            _type=response.get('type'),
-            key=response.get('key'),
-            published_at=response.get('published_at'),
-            site=response.get('site'),
-            is_official=response.get('official')
-        )
+        results = response.get('results') or []
+
+        return [
+            cls(
+                name=result.get('name'),
+                _id=result.get('id'),
+                _type=result.get('type'),
+                key=result.get('key'),
+                published_at=result.get('published_at'),
+                site=result.get('site'),
+                is_official=result.get('official')
+            ) for result in results
+        ]
 
     def __str__(self):
         if self.type == 'Trailer' and self.is_official:
