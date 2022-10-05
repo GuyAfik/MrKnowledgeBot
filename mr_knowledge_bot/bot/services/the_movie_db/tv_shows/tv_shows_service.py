@@ -27,14 +27,17 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
         if len(tv_shows) > limit:
             if sort_by == 'popularity':
                 tv_shows = sorted(
-                    tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None)
+                    tv_shows, key=lambda tv_show: (tv_show.popularity, tv_show.popularity is not None), reverse=True
                 )
             elif sort_by == 'release_date':
                 tv_shows = sorted(
-                    tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None)
+                    tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None),
+                    reverse=True
                 )
             elif sort_by == 'tv_shows':
-                tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None))
+                tv_shows = sorted(
+                    tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None), reverse=True
+                )
 
             tv_shows = tv_shows[:limit]
 
@@ -98,11 +101,17 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
             ]
 
         if sort_by == 'popularity':
-            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None))
+            tv_shows = sorted(
+                tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None), reverse=True
+            )
         elif sort_by == 'first_air_date':
-            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None))
+            tv_shows = sorted(
+                tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None), reverse=True
+            )
         elif sort_by == 'rating':
-            tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None))
+            tv_shows = sorted(
+                tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None), reverse=True
+            )
 
         if len(tv_shows) > limit:
             tv_shows = tv_shows[:limit]
