@@ -12,6 +12,14 @@ class Conversation(ABC):
         self._update = update
         self._context = context
 
+    @property
+    def update(self):
+        return self._update
+
+    @property
+    def context(self):
+        return self._context
+
     @classmethod
     def from_stage(cls, update: Update, context: CallbackContext):
         return cls(update, context)

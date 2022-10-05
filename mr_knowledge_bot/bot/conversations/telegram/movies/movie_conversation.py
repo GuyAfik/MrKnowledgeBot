@@ -18,7 +18,7 @@ class TelegramMovieConversation(Conversation, ABC):
 
     def __init__(self, update: Update, context: CallbackContext):
         super().__init__(update, context)
-        self._movie_service = MovieService.from_context(context=context)
+        self._movie_service = MovieService.from_context(context=self.context)
 
     def find_movies_by_name_command(
         self, name: str, limit: int, sort_by: str
@@ -93,7 +93,7 @@ class TelegramMovieConversation(Conversation, ABC):
             [movie.name for movie in self._movie_service.movies], resize_keyboard=True, one_time_keyboard=True
         )
 
-    def query_movie_overview(self):
+    def query_movie_details(self):
         if movies_to_choose := self.choose_movie(self._update.callback_query.data):
             text = 'Please choose a movie from the list to get its overview 🎬'
             self._context.bot.send_message(

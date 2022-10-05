@@ -4,9 +4,9 @@ from mr_knowledge_bot.bot.services.base_movie_tv_show_service import BaseMoviesT
 
 class TheMovieDBBaseService(BaseMoviesTVShowsService, ABC):
 
-    def __init__(self, client=None):
+    def __init__(self, client=None, query_genres=False):
         self._client = client
-        self.genres = self._client.get_genres()
+        self.genres = self._client.get_genres() if query_genres else []
 
     def find_by_name(self, **kwargs):
         return self._client.search(**kwargs)
