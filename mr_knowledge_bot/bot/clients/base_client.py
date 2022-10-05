@@ -7,71 +7,15 @@ from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMov
 from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
 from mr_knowledge_bot.bot.entites.base_entity import BaseEntity
-from typing import Type, Optional, Any
+from typing import Type, Optional
+from mr_knowledge_bot.utils import dict_get_nested_fields
+
 
 logger = logging.getLogger('knowledge-bot')
 
 
 class ApiError(Exception):
     pass
-
-
-class ApiResponse(SimpleNamespace):
-    pass
-
-
-def is_english_letters_movie(name: str):
-    try:
-        name.encode(encoding='utf-8').decode('ascii')
-    except UnicodeDecodeError:
-        return False
-    else:
-        return True
-
-
-def response_to_tv_show_entities(response: dict):
-    if 'results' not in response:
-        return TheMovieDBTVShowEntity.from_response(response)
-    results = response.get('results') or []
-    return [
-        TheMovieDBTVShowEntity.from_response(result)
-        for result in results if is_english_letters_movie(result.get('name'))
-    ]
-
-
-def response_to_movie_entities(response: dict):
-    if 'results' not in response:
-        return TheMovieDBMovieEntity.from_response(response)
-    results = response.get('results') or []
-    return [
-        TheMovieDBMovieEntity.from_response(result)
-        for result in results if is_english_letters_movie(result.get('name'))
-    ]
-
-
-def response_to_video_entities(response: dict):
-    results = response.get('results')
-    return [VideoEntity.from_response(result) for result in results]
-
-
-def response_to_genre_entity(response: dict):
-    genres = response.get('genres')
-    return [GenreEntity.from_response(genre) for genre in genres]
-
-
-def dict_get_nested_fields(dictionary: dict, keys: Optional[list], default: Any = None):
-    if not keys:
-        return dictionary
-
-    result = dictionary
-
-    for key in keys:
-        try:
-            result = result[key]
-        except (KeyError, TypeError, IndexError, AttributeError):
-            result = default
-
-    return result
 
 
 def parse_http_response(
@@ -108,13 +52,6 @@ def parse_http_response(
     if response_type == 'class' and not _class_type:
         raise ValueError('_class_type must be provided when "response_type" = class')
 
-    _class_type_to_entity = {
-        TheMovieDBTVShowEntity: response_to_tv_show_entities,
-        TheMovieDBMovieEntity: response_to_movie_entities,
-        GenreEntity: response_to_genre_entity,
-        VideoEntity: response_to_video_entities
-    }
-
     def decorator(func):
         def wrapper(self, *args, **kwargs):
             # response type will override the response of the class.
@@ -128,7 +65,7 @@ def parse_http_response(
                     raise ApiError(f'Error: ({http_response.text})')
                 raise ApiError(f'Error: ({response_as_json})')
             if response_type == 'class':
-                return _class_type_to_entity[_class_type](http_response.json())
+                return _class_type.from_response(http_response.json())
             elif response_type == 'json':
                 print(http_response.json())
                 return dict_get_nested_fields(dictionary=http_response.json(), keys=keys)

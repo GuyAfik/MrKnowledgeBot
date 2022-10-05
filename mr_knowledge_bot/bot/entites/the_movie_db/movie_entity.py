@@ -2,7 +2,7 @@
 from mr_knowledge_bot.bot.entites.the_movie_db.base import TheMovieDBBaseEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
 import datetime
-
+from mr_knowledge_bot.utils import is_english_letters_movie
 
 class TheMovieDBMovieEntity(TheMovieDBBaseEntity):
 
@@ -25,15 +25,33 @@ class TheMovieDBMovieEntity(TheMovieDBBaseEntity):
 
     @classmethod
     def from_response(cls, response: dict):
-        return cls(
-            _id=response.get('id'),
-            name=response.get('title'),
-            release_date=response.get('release_date'),
-            genres=response.get('genre_ids') or response.get('genres'),
-            overview=response.get('overview'),
-            popularity=response.get('popularity'),
-            rating=response.get('vote_average'),
-            homepage=response.get('homepage'),
-            status=response.get('status'),
-            runtime=response.get('runtime')
-        )
+        if 'results' not in response:
+            return cls(
+                _id=response.get('id'),
+                name=response.get('title'),
+                release_date=response.get('release_date'),
+                genres=response.get('genre_ids') or response.get('genres'),
+                overview=response.get('overview'),
+                popularity=response.get('popularity'),
+                rating=response.get('vote_average'),
+                homepage=response.get('homepage'),
+                status=response.get('status'),
+                runtime=response.get('runtime')
+            )
+
+        results = response.get('results') or []
+
+        return [
+            cls(
+                _id=result.get('id'),
+                name=result.get('title'),
+                release_date=result.get('release_date'),
+                genres=result.get('genre_ids') or result.get('genres'),
+                overview=result.get('overview'),
+                popularity=result.get('popularity'),
+                rating=result.get('vote_average'),
+                homepage=result.get('homepage'),
+                status=result.get('status'),
+                runtime=result.get('runtime')
+            ) for result in results if is_english_letters_movie(result.get('title'))
+        ]
