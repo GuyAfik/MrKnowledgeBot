@@ -7,6 +7,13 @@ if __name__ == '__main__':
     bot = Bot()
     bot.start()
 
+    # c = TVShowsClient()
+    # v = c.search(tv_show_name='game of thrones')
+    # game_of_thrones_id = '1399'
+    #
+    # d = c.get_details(_id=game_of_thrones_id)
+
+    print()
     # a = MovieClient()
     # b = a.search(movie_name='interstellar')
     # interstellar_id = 157336

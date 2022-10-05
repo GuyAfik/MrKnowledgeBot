@@ -1,5 +1,8 @@
 import dateparser
 from datetime import datetime
+
+from telegram.ext import CallbackContext
+
 from mr_knowledge_bot.bot.clients import TVShowsClient
 from abc import ABC
 from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import TheMovieDBBaseService
@@ -7,8 +10,13 @@ from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import The
 
 class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
 
-    def __init__(self):
+    def __init__(self, tv_shows=None):
         super().__init__(client=TVShowsClient())
+        self.tv_shows = tv_shows
+
+    @classmethod
+    def from_context(cls, context: CallbackContext):
+        return cls(tv_shows=context.user_data.get('tv_shows'))
 
     def find_by_name(self, tv_show_name, limit, sort_by):
         """
@@ -16,15 +24,21 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
         """
         tv_shows = super().find_by_name(tv_show_name=tv_show_name, limit=limit, sort_by=sort_by)
 
-        if sort_by == 'rating':
-            sort_by = 'vote_average'
-        elif sort_by == 'release_date':
-            sort_by = 'first_air_date'
-
         if len(tv_shows) > limit:
-            tv_shows = sorted(tv_shows, key=lambda d: d.get(sort_by), reverse=True)[:limit]
+            if sort_by == 'popularity':
+                tv_shows = sorted(
+                    tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None)
+                )
+            elif sort_by == 'release_date':
+                tv_shows = sorted(
+                    tv_shows, key=lambda tv_show: (tv_show.release_date, tv_show.release_date is not None)
+                )
+            elif sort_by == 'tv_shows':
+                tv_shows = sorted(tv_shows, key=lambda tv_show: (tv_show.rating, tv_show.rating is not None))
 
-        return '\n'.join([tv_show.get('name') for tv_show in tv_shows])
+            tv_shows = tv_shows[:limit]
+
+        return tv_shows
 
     def discover(
         self,
@@ -94,3 +108,9 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
             tv_shows = tv_shows[:limit]
 
         return '\n'.join([tv_show.name for tv_show in tv_shows])
+
+    def get_details(self, chosen_tv_show):
+        for tv_show in self.tv_shows:
+            if chosen_tv_show == tv_show.name:
+                return super().get_details(_id=tv_show.id)
+        return None

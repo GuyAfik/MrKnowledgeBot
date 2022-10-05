@@ -116,7 +116,7 @@ class TelegramMovieConversation(Conversation, ABC):
 
     def display_movie_details(self):
         chosen_movie = self._update.message.text
-        if movie := self._movie_service.get_movie_details(chosen_movie):
+        if movie := self._movie_service.get_details(chosen_movie):
             text = ''
             if movie_overview := movie.overview:
                 text = f'*{chosen_movie} - (Overview)*\n\n{movie_overview}'

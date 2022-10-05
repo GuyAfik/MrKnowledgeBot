@@ -21,7 +21,9 @@ class ApiResponse(SimpleNamespace):
 
 
 def response_to_tv_show_entities(response: dict):
-    results = response.get('results')
+    if 'results' not in response:
+        return TheMovieDBTVShowEntity.from_response(response)
+    results = response.get('results') or []
     return [TheMovieDBTVShowEntity.from_response(result) for result in results]
 
 
@@ -113,6 +115,7 @@ def parse_http_response(
             if response_type == 'class':
                 return _class_type_to_entity[_class_type](http_response.json())
             elif response_type == 'json':
+                print(http_response.json())
                 return dict_get_nested_fields(dictionary=http_response.json(), keys=keys)
             else:  # in case the entire response object is needed
                 return http_response

@@ -14,8 +14,8 @@ class TheMovieDBBaseService(BaseMoviesTVShowsService, ABC):
     def discover(self, **kwargs):
         return self._client.discover(**kwargs)
 
-    def get_movie_details(self, movie_id):
-        return self._client.get_details(movie_id)
+    def get_details(self, _id):
+        return self._client.get_details(_id)
 
     def get_genres(self):
         return '\n'.join(genre.name for genre in self.genres)
