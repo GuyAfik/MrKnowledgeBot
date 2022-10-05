@@ -50,6 +50,15 @@ class TelegramBot(BaseBot, ABC):
                 ],
                 self._tv_show_conversation.display_tv_show_details_stage: [
                     MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_tv_show_details)
+                ],
+                self._tv_show_conversation.query_tv_show_season_stage: [
+                    CallbackQueryHandler(callback=self.query_tv_show_season)
+                ],
+                self._tv_show_conversation.display_tv_show_season_stage: [
+                    MessageHandler(filters=Filters.regex('^(?!.*exit).*$'), callback=self.display_tv_show_season)
+                ],
+                self._tv_show_conversation.display_tv_show_trailer_stage: [
+                    CallbackQueryHandler(callback=self.display_tv_show_trailer)
                 ]
             },
             fallbacks=[MessageHandler(filters=Filters.regex('^exit$'), callback=self.cancel_conversation)]
@@ -420,6 +429,15 @@ class TelegramBot(BaseBot, ABC):
 
     def display_tv_show_details(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).display_tv_show_details()
+
+    def query_tv_show_season(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).query_specific_tv_show_season()
+
+    def display_tv_show_season(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).display_tv_show_season()
+
+    def display_tv_show_trailer(self, update: Update, context: CallbackContext):
+        return self._tv_show_conversation(update, context).display_tv_show_trailer()
 
     @command(name='get_movie_genres', description='Retrieves the available movies genres.')
     def get_movie_genres_command(self, update: Update, context: CallbackContext):

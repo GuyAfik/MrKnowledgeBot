@@ -114,3 +114,27 @@ class TheMovieDBTVShowService(TheMovieDBBaseService, ABC):
             if chosen_tv_show == tv_show.name:
                 return super().get_details(_id=tv_show.id)
         return None
+
+    def get_tv_seasons(self, chosen_tv_show):
+        tv_show = self.get_details(chosen_tv_show)
+        return tv_show.seasons
+
+    def get_tv_show_season(self, chosen_tv_show, chosen_tv_season):
+        tv_show_seasons = self.get_tv_seasons(chosen_tv_show)
+        for season in tv_show_seasons:
+            if season.season_number == chosen_tv_season:
+                return season
+        return None
+
+    def get_trailer(self, chosen_tv_show):
+        """
+        Returns a trailer of a movie.
+        """
+        for tv_show in self.tv_shows:
+            if chosen_tv_show == tv_show.name:
+                for video in self._client.get_videos(_id=tv_show.id):
+                    if trailer_video := str(video):
+                        return trailer_video
+            return ''
+        return None
+

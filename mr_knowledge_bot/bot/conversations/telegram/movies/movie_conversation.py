@@ -171,7 +171,8 @@ class TelegramMovieConversation(Conversation, ABC):
             self._update.effective_message.reply_text(
                 text=f'[{chosen_movie_name} - (Trailer)]({movie_trailer})',
                 reply_to_message_id=self._update.message.message_id,
-                parse_mode=ParseMode.MARKDOWN
+                parse_mode=ParseMode.MARKDOWN,
+                reply_markup=ReplyKeyboardRemove()
             )
             next_stage = self.query_additional_movies()
         elif movie_trailer is None:
