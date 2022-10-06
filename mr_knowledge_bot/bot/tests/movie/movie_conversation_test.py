@@ -4,7 +4,7 @@ import pytest
 import requests
 from mr_knowledge_bot.bot.conversations import MovieConversation
 from telegram.ext import ConversationHandler
-from mr_knowledge_bot.bot.clients.base_client import response_to_movie_entities
+from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
 
 
 BASE_URL = 'https://test_api.com/'
@@ -20,7 +20,7 @@ def movie_conversation_no_repeat(mocker, telegram_context, telegram_update) -> M
 
     def get_movies_from_context_side_effect_with_no_repeat(key):
         if key == 'movies':
-            return response_to_movie_entities(
+            return TheMovieDBMovieEntity.from_response(
                 load_json('mr_knowledge_bot/bot/tests/movie/test_data/search_movies_response.json')[0]
             )
         return None
@@ -35,7 +35,7 @@ def movie_conversation_no_repeat(mocker, telegram_context, telegram_update) -> M
 def movie_conversation_with_repeat(mocker, telegram_context, telegram_update) -> MovieConversation:
     def get_movies_from_context_side_effect_with_repeat(key):
         if key == 'movies':
-            return response_to_movie_entities(
+            return TheMovieDBMovieEntity.from_response(
                 load_json('mr_knowledge_bot/bot/tests/movie/test_data/search_movies_response.json')[0]
             )
         elif key == 'repeat':
