@@ -1,3 +1,4 @@
+import logging
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
@@ -6,6 +7,28 @@ from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
 from mr_knowledge_bot.bot.conversations import MovieConversation, TVShowConversation
 from mr_knowledge_bot.bot.telegram.telegram_click import generate_command_list
+
+
+logger = logging.getLogger(__name__)
+
+
+def error_handler(func):
+    def wrapper(self, update: Update, context: CallbackContext, *args, **kwargs):
+        try:
+            return func(self, update, context, *args, **kwargs)
+        except Exception as e:
+            logger.error(f'Error:\n{e}')
+            message = update.message or update.callback_query.message or update.effective_message
+            first_name = message.from_user.first_name
+            last_name = message.from_user.last_name
+            chat_id = message.chat_id
+            context.bot.send_message(
+                chat_id=chat_id,
+                text=f'Hi {first_name} {last_name}, sorry, an error occurred '
+                     f'during my thinking process, my apologies. Feel free to try again.'
+            )
+            return self.cancel_conversation(update, context)
+    return wrapper
 
 
 class TelegramBot(BaseBot, ABC):
@@ -141,6 +164,7 @@ class TelegramBot(BaseBot, ABC):
             ),
         ]
     )
+    @error_handler
     def find_movies_by_name_command(
         self, update: Update, context: CallbackContext, name: str, limit: int, sort_by: str
     ):
@@ -224,6 +248,7 @@ class TelegramBot(BaseBot, ABC):
             ),
         ]
     )
+    @error_handler
     def discover_movies_command(
         self,
         update: Update,
@@ -250,15 +275,19 @@ class TelegramBot(BaseBot, ABC):
             not_released=not_released
         )
 
+    @error_handler
     def query_movie_details(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).query_movie_details()
 
+    @error_handler
     def display_movie_details(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).display_movie_details()
 
+    @error_handler
     def query_movie_trailer(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).query_movie_trailer()
 
+    @error_handler
     def display_movie_trailer(self, update: Update, context: CallbackContext):
         return self._movie_conversation(update, context).display_movie_trailer()
 
@@ -294,6 +323,7 @@ class TelegramBot(BaseBot, ABC):
             ),
         ]
     )
+    @error_handler
     def find_tv_shows_by_name_command(
         self, update: Update, context: CallbackContext, name: str, limit: int, sort_by: str
     ):
@@ -385,6 +415,7 @@ class TelegramBot(BaseBot, ABC):
             ),
         ]
     )
+    @error_handler
     def discover_tv_shows_command(
         self,
         update: Update,
@@ -413,22 +444,28 @@ class TelegramBot(BaseBot, ABC):
             not_released=not_released
         )
 
+    @error_handler
     def query_tv_show_details(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).query_tv_show_details()
 
+    @error_handler
     def display_tv_show_details(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).display_tv_show_details()
 
+    @error_handler
     def query_tv_show_season(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).query_specific_tv_show_season()
 
+    @error_handler
     def display_tv_show_season(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).display_tv_show_season()
 
+    @error_handler
     def display_tv_show_trailer(self, update: Update, context: CallbackContext):
         return self._tv_show_conversation(update, context).display_tv_show_trailer()
 
     @command(name='get_movie_genres', description='Retrieves the available movies genres.')
+    @error_handler
     def get_movie_genres_command(self, update: Update, context: CallbackContext):
 
         chat_id = update.message.chat_id
@@ -443,6 +480,7 @@ class TelegramBot(BaseBot, ABC):
         update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
 
     @command(name='get_tv_shows_genres', description='Retrieves the available TV-shows genres.')
+    @error_handler
     def get_tv_shows_genres_command(self, update: Update, context: CallbackContext):
 
         chat_id = update.message.chat_id
