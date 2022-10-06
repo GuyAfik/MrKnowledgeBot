@@ -129,7 +129,8 @@ class TelegramBot(BaseBot, ABC):
         last_name = user_info.last_name
 
         text = f'Hello {first_name} {last_name}! Here are the available conversations 😎' \
-               f'\n\n{generate_command_list(update, context, summary=True)}'
+               f'\n\n{generate_command_list(update, context, summary=True)}\n\n' \
+               f'For more information please refer to https://github.com/GuyAfik/MrKnowledgeBot/blob/master/README.md'
         bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN)
 
     @command(
