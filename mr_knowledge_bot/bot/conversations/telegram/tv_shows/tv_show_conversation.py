@@ -57,6 +57,22 @@ class TelegramTVShowConversation(Conversation, ABC):
 
         return self.display_tv_shows(tv_shows)
 
+    def get_genres(self):
+        chat_id = self._update.message.chat_id
+        self._context.bot.send_message(chat_id, text=self.hang_on_message)
+
+        if tv_show_genres := self._tv_shows_service.get_genres():
+            pretty_tv_show_genres = '\n'.join(tv_show_genres)
+            text = f'Available TV-shows Genres 😀\n\n{pretty_tv_show_genres}'
+        else:
+            text = f'Could not find any movie genres. 😞'
+
+        self._update.effective_message.reply_text(
+            text=text,
+            reply_to_message_id=self.get_message_id()
+        )
+        return ConversationHandler.END
+
     def display_tv_shows(self, tv_shows):
         if tv_shows:
             self._context.user_data['tv_shows'] = tv_shows  # save the found movies for next stages in the conversation.

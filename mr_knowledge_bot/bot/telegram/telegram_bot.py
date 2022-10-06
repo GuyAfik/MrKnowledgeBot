@@ -467,29 +467,9 @@ class TelegramBot(BaseBot, ABC):
     @command(name='get_movie_genres', description='Retrieves the available movies genres.')
     @error_handler
     def get_movie_genres_command(self, update: Update, context: CallbackContext):
-
-        chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
-
-        movies_genres = self._movie_conversation().get_genres()
-        if movies_genres:
-            text = f'Movie Genres 😀\n\n{movies_genres}'
-        else:
-            text = f'Could not find any movie genres. 😞'
-
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        return self._movie_conversation(update, context).get_genres()
 
     @command(name='get_tv_shows_genres', description='Retrieves the available TV-shows genres.')
     @error_handler
     def get_tv_shows_genres_command(self, update: Update, context: CallbackContext):
-
-        chat_id = update.message.chat_id
-        context.bot.send_message(chat_id, text=f'Hang on while I am thinking, a bot needs to think too 🤓...')
-
-        tv_shows_genres = self._tv_shows_service().get_genres()
-        if tv_shows_genres:
-            text = f'TV-shows Genres 😀\n\n{tv_shows_genres}'
-        else:
-            text = f'Could not find any TV-shows genres. 😞'
-
-        update.effective_message.reply_text(text=text, reply_to_message_id=update.message.message_id)
+        return self._tv_show_conversation(update, context).get_genres()
