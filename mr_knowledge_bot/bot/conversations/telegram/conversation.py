@@ -5,7 +5,6 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class Conversation(ABC):
-
     hang_on_message = f'Hang on while I am thinking, a bot needs to think too 🤓...'
 
     def __init__(self, update: Update, context: CallbackContext):
@@ -29,8 +28,13 @@ class Conversation(ABC):
         return message.chat_id
 
     def get_message_id(self):
-        message = self._update.callback_query.message or self._update.message or self._update.effective_message \
-                  or self._update.effective_message or self._update.message.reply_to_message
+        if self._update.callback_query:
+            callback_query_message = self._update.callback_query.message
+        else:
+            callback_query_message = None
+
+        message = callback_query_message or self._update.message or \
+                  self._update.effective_message or self._update.message.reply_to_message
         return message.message_id
 
     @staticmethod

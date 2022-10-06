@@ -58,6 +58,22 @@ class TelegramMovieConversation(Conversation, ABC):
 
         return self.display_movies(movies)
 
+    def get_genres(self):
+        chat_id = self._update.message.chat_id
+        self._context.bot.send_message(chat_id, text=self.hang_on_message)
+
+        if movie_genres := self._movie_service.get_genres():
+            pretty_movie_genres = '\n'.join(movie_genres)
+            text = f'Available Movie Genres 😀\n\n{pretty_movie_genres}'
+        else:
+            text = f'Could not find any movie genres. 😞'
+
+        self._update.effective_message.reply_text(
+            text=text,
+            reply_to_message_id=self.get_message_id()
+        )
+        return ConversationHandler.END
+
     def display_movies(self, movies):
         if movies:
             self._context.user_data['movies'] = movies  # save the found movies for next stages in the conversation.
