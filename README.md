@@ -4,9 +4,12 @@ MrKnowledgeBot is a telegram bot that provides information about movies/tv-shows
 MrKnowledgeBot supports some basic concepts of CLI use in order to track easily which arguments were provided.
 
 ## Demo
-This is an example of a conversation that the */find_movies_by_name* command triggers.
 
-https://user-images.githubusercontent.com/53861351/194077219-2104c1d6-bae9-471a-b45a-1b2a561a0654.mp4
+### find_movies_by_name
+
+
+https://user-images.githubusercontent.com/53861351/194547868-5c303d10-3f77-4897-aa4a-88b12f5974d6.mp4
+
 
 
 ## Supported commands
