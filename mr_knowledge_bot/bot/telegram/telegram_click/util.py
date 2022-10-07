@@ -82,7 +82,4 @@ def send_message(bot: Bot, chat_id: str, message: str, parse_mode: str = None, r
     :param parse_mode: specify whether to parse the text as markdown or HTML
     :param reply_to: the message id to reply to
     """
-    from emoji import emojize
-
-    emojized_text = emojize(message)
-    bot.send_message(chat_id=chat_id, parse_mode=parse_mode, text=emojized_text, reply_to_message_id=reply_to)
+    bot.send_message(chat_id=chat_id, parse_mode=parse_mode, text=message, reply_to_message_id=reply_to)
