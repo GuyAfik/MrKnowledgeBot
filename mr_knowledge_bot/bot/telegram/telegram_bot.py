@@ -1,4 +1,5 @@
 import logging
+import os
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
 from telegram.ext import (
@@ -104,6 +105,14 @@ class TelegramBot(BaseBot, ABC):
     def start(self):
         self._updater.start_polling()
         self._updater.idle()
+
+    def start_webhook(self):
+        self._updater.start_webhook(
+            listen='0.0.0.0',
+            port=int(os.getenv('PORT', 5000)),
+            url_path=self.token,
+            webhook_url=f'<heroku_url>{self.token}'
+        )
 
     def cancel_conversation(self, update: Update, context: CallbackContext):
         self.send_available_commands(update, context)

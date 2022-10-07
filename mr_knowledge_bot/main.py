@@ -2,9 +2,13 @@
 from mr_knowledge_bot.bot import Bot
 from mr_knowledge_bot.bot.clients import MovieClient, TVShowsClient
 
+
 if __name__ == '__main__':
     bot = Bot()
-    bot.start()
+    bot.start_webhook()
+
+
+    # bot.start()
 
     # c = TVShowsClient()
     # v = c.search(tv_show_name='breaking bad')
