@@ -18,13 +18,11 @@ def error_handler(func):
             return func(self, update, context, *args, **kwargs)
         except Exception as e:
             logger.error(f'Error:\n{e}')
-            message = update.message or update.effective_message or update.callback_query.message
-            first_name = message.from_user.first_name
-            last_name = message.from_user.last_name
+            message = update.effective_message or update.message or update.callback_query.message
             chat_id = message.chat_id
             context.bot.send_message(
                 chat_id=chat_id,
-                text=f'Hi {first_name} {last_name}, sorry, an error occurred '
+                text=f'Hello there! sorry, an error occurred '
                      f'during my thinking process, my apologies. Feel free to try again.'
             )
             return self.cancel_conversation(update, context)
@@ -122,18 +120,14 @@ class TelegramBot(BaseBot, ABC):
     @staticmethod
     def send_available_commands(update: Update, context: CallbackContext):
         bot = context.bot
-        chat_id = update.effective_message.chat_id
-
         if update.callback_query:
             message = update.callback_query.message
         else:
             message = update.message
 
-        user_info = message.from_user
-        first_name = user_info.first_name
-        last_name = user_info.last_name
+        chat_id = message.chat_id
 
-        text = f'Hello {first_name} {last_name}! Here are the available conversations 😎' \
+        text = f'Hello There! Here are the available conversations 😎' \
                f'\n\n{generate_command_list(update, context, summary=True)}\n\n' \
                f'For more information please refer to https://github.com/GuyAfik/MrKnowledgeBot/blob/master/README.md'
         bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN, reply_markup=ReplyKeyboardRemove())
