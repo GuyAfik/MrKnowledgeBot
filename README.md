@@ -3,6 +3,12 @@
 MrKnowledgeBot is a telegram bot that provides information about movies/tv-shows.
 MrKnowledgeBot supports some basic concepts of CLI use in order to track easily which arguments were provided.
 
+The bot is hosted on the cloud (heroku) so you can feel free to access it through this URL:
+
+```
+https://t.me/mr_knowledge_bot
+```
+
 ## Demo
 
 ### find_movies_by_name
