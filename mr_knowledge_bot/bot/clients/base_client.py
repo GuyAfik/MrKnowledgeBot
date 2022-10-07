@@ -1,11 +1,6 @@
 from abc import ABC, abstractmethod
 import logging
 from json.decoder import JSONDecodeError
-from types import SimpleNamespace
-from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_entity import TheMovieDBTVShowEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.movie_entity import TheMovieDBMovieEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
-from mr_knowledge_bot.bot.entites.the_movie_db.video_entity import VideoEntity
 from mr_knowledge_bot.bot.entites.base_entity import BaseEntity
 from typing import Type, Optional
 from mr_knowledge_bot.utils import dict_get_nested_fields
