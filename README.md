@@ -10,6 +10,9 @@ MrKnowledgeBot supports some basic concepts of CLI use in order to track easily 
 
 https://user-images.githubusercontent.com/53861351/194547868-5c303d10-3f77-4897-aa4a-88b12f5974d6.mp4
 
+### find_tv_shows_by_name
+
+https://user-images.githubusercontent.com/53861351/194550438-b7bdd44a-9b3f-4f86-a88a-efdee3bf97a2.mp4
 
 
 ## Supported commands
