@@ -111,7 +111,7 @@ class TelegramBot(BaseBot, ABC):
             listen='0.0.0.0',
             port=int(os.getenv('PORT', 5000)),
             url_path=self.token,
-            webhook_url=f'<heroku_url>{self.token}'
+            webhook_url=f'{os.getenv("HEROKU_URL")}{self.token}'
         )
 
     def cancel_conversation(self, update: Update, context: CallbackContext):
