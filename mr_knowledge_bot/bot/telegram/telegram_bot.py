@@ -126,7 +126,7 @@ class TelegramBot(BaseBot, ABC):
 
         chat_id = message.chat_id
 
-        text = f'Hello There! Here are the available conversations 😎' \
+        text = f'Hello There! Here are the available commands 😎' \
                f'\n\n{generate_command_list(update, context, summary=True)}\n\n' \
                f'For more information please refer to https://github.com/GuyAfik/MrKnowledgeBot/blob/master/README.md'
         bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN, reply_markup=ReplyKeyboardRemove())

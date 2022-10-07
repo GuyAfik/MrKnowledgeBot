@@ -6,7 +6,7 @@ from typing import Type, Optional
 from mr_knowledge_bot.utils import dict_get_nested_fields
 
 
-logger = logging.getLogger('knowledge-bot')
+logger = logging.getLogger(__name__)
 
 
 class ApiError(Exception):
