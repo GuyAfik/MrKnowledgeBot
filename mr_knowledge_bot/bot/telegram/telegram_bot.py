@@ -18,7 +18,7 @@ def error_handler(func):
             return func(self, update, context, *args, **kwargs)
         except Exception as e:
             logger.error(f'Error:\n{e}')
-            message = update.message or update.callback_query.message or update.effective_message
+            message = update.message or update.effective_message or update.callback_query.message
             first_name = message.from_user.first_name
             last_name = message.from_user.last_name
             chat_id = message.chat_id
