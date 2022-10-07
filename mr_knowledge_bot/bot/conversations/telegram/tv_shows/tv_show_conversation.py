@@ -257,7 +257,7 @@ class TelegramTVShowConversation(Conversation, ABC):
                     reply_to_message_id=self.get_message_id(),
                     reply_markup=ReplyKeyboardRemove()
                 )
-                with VideoDownlo    ader(tv_show_trailer) as file:
+                with VideoDownloader(tv_show_trailer) as file:
                     self.context.bot.send_video(
                         chat_id=self.get_chat_id(),
                         video=file,
