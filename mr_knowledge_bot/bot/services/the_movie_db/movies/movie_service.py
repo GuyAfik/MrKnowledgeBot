@@ -1,9 +1,13 @@
 import dateparser
+import logging
 from datetime import datetime
 from mr_knowledge_bot.bot.clients import MovieClient
 from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import TheMovieDBBaseService
 from abc import ABC
 from telegram.ext import CallbackContext
+
+
+logger = logging.getLogger(__name__)
 
 
 class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
@@ -38,6 +42,7 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
 
             movies = movies[:limit]
 
+        logger.debug(f'found the following movies: {movies}')
         return movies
 
     def discover(
@@ -114,6 +119,7 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
         if len(movies) > limit:
             movies = movies[:limit]
 
+        logger.debug(f'found the following movies: {movies}')
         return movies
 
     def get_trailer(self, chosen_movie):
@@ -124,6 +130,7 @@ class TheMovieDBMovieService(TheMovieDBBaseService, ABC):
             if chosen_movie == movie.name:
                 for video in self._client.get_videos(_id=movie.id):
                     if trailer_video := str(video):
+                        logger.debug(f'found the following movie trailer video {trailer_video}')
                         return trailer_video
                 return ''
         return None
