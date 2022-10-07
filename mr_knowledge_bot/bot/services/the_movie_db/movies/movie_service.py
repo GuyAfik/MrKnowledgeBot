@@ -4,7 +4,6 @@ from mr_knowledge_bot.bot.clients import MovieClient
 from mr_knowledge_bot.bot.services.the_movie_db.base_movie_db_service import TheMovieDBBaseService
 from abc import ABC
 from telegram.ext import CallbackContext
-from pytube import YouTube
 
 
 class TheMovieDBMovieService(TheMovieDBBaseService, ABC):

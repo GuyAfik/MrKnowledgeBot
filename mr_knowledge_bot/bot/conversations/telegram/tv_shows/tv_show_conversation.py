@@ -1,7 +1,7 @@
 from telegram.ext import CallbackContext, ConversationHandler
 from abc import ABC
 from mr_knowledge_bot.bot.conversations.telegram.conversation import Conversation
-from telegram import Update, ReplyKeyboardMarkup, ParseMode, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update, ReplyKeyboardMarkup, ParseMode, ReplyKeyboardRemove
 from mr_knowledge_bot.bot.services import TVShowService, VideoDownloader
 
 

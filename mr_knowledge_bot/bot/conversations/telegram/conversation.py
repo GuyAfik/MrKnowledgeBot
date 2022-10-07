@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from telegram import Update
 from telegram.ext import CallbackContext
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup

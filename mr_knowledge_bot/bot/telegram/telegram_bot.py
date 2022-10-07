@@ -1,7 +1,9 @@
 import logging
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
+from telegram.ext import (
+    CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
+)
 from telegram import Update, ParseMode, ReplyKeyboardRemove
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
@@ -92,10 +94,7 @@ class TelegramBot(BaseBot, ABC):
                 tv_show_conversation_handler,
                 CommandHandler(command='get_movie_genres', callback=self.get_movie_genres_command),
                 CommandHandler(command='get_tv_shows_genres', callback=self.get_tv_shows_genres_command)
-            ],
-            # 1: [
-            #     MessageHandler(Filters.text & ~Filters.command, callback=self._unknown_command)
-            # ]
+            ]
         }
 
         for group, handlers in handler_groups.items():
