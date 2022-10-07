@@ -124,7 +124,12 @@ class TelegramBot(BaseBot, ABC):
         bot = context.bot
         chat_id = update.effective_message.chat_id
 
-        user_info = update.message.from_user
+        if update.callback_query:
+            message = update.callback_query.message
+        else:
+            message = update.message
+
+        user_info = message.from_user
         first_name = user_info.first_name
         last_name = user_info.last_name
 

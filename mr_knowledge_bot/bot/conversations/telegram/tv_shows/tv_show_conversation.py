@@ -2,8 +2,7 @@ from telegram.ext import CallbackContext, ConversationHandler
 from abc import ABC
 from mr_knowledge_bot.bot.conversations.telegram.conversation import Conversation
 from telegram import Update, ReplyKeyboardMarkup, ParseMode, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
-
-from mr_knowledge_bot.bot.services import TVShowService
+from mr_knowledge_bot.bot.services import TVShowService, VideoDownloader
 
 
 class TelegramTVShowConversation(Conversation, ABC):
@@ -254,11 +253,16 @@ class TelegramTVShowConversation(Conversation, ABC):
         if self._update.callback_query.data == 'y':
             if tv_show_trailer := self._tv_shows_service.get_trailer(chosen_tv_show):
                 self._update.effective_message.reply_text(
-                    text=f'[{chosen_tv_show} - (Trailer)]({tv_show_trailer})',
+                    text=f'Please hang on while I am bringing the trailer... ',
                     reply_to_message_id=self.get_message_id(),
-                    parse_mode=ParseMode.MARKDOWN,
                     reply_markup=ReplyKeyboardRemove()
                 )
+                with VideoDownlo    ader(tv_show_trailer) as file:
+                    self.context.bot.send_video(
+                        chat_id=self.get_chat_id(),
+                        video=file,
+                        reply_to_message_id=self.get_message_id(),
+                    )
             else:
                 self._update.effective_message.reply_text(
                     text=f'Could not find trailer for movie "{chosen_tv_show}"',
@@ -274,5 +278,4 @@ class TelegramTVShowConversation(Conversation, ABC):
             reply_markup=self.get_yes_or_no_keyboard(),
             chat_id=self.get_chat_id()
         )
-        self._context.user_data['repeat'] = True
         return self.query_tv_show_details_stage

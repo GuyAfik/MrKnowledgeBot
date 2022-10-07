@@ -5,10 +5,10 @@ class VideoEntity(TheMovieDBBaseEntity):
 
     def __init__(self, _id, name, _type, key, published_at, site, is_official):
         super().__init__(_id, name)
-        self.type = _type
+        self.type = _type.lower()
         self.key = key
         self.published_at = published_at
-        self.site = site
+        self.site = site.lower()
         self.is_official = is_official
 
     @classmethod
@@ -28,8 +28,9 @@ class VideoEntity(TheMovieDBBaseEntity):
         ]
 
     def __str__(self):
-        if self.type.lower() == 'trailer' and self.is_official:
-            platform = f'https://www.youtube.com/watch?v=' if self.site.lower() == 'youtube' else 'https://vimeo.com/'
-            return f'{platform}{self.key}'
+        if self.type == 'trailer' and self.is_official and self.site == 'youtube':
+            return f'https://www.youtube.com/watch?v={self.key}'
         return ''
+
+
 

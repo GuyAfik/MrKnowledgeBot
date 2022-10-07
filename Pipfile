@@ -8,6 +8,7 @@ flask = "*"
 python-telegram-bot = "*"
 requests = "*"
 dateparser = "*"
+pytube = "*"
 
 [dev-packages]
 pytest = "*"
