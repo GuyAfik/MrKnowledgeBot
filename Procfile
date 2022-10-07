@@ -1,0 +1,1 @@
+web: python mr_knowledge_bot/main.py $PORT
