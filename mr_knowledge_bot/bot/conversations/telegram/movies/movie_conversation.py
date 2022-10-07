@@ -5,7 +5,7 @@ from abc import ABC
 from telegram.ext import CallbackContext, ConversationHandler
 from telegram import Update, ReplyKeyboardMarkup, ParseMode, ReplyKeyboardRemove
 from mr_knowledge_bot.bot.conversations.telegram.conversation import Conversation
-from mr_knowledge_bot.bot.services import MovieService
+from mr_knowledge_bot.bot.services import MovieService, VideoDownloader
 
 
 class TelegramMovieConversation(Conversation, ABC):
@@ -185,11 +185,17 @@ class TelegramMovieConversation(Conversation, ABC):
         movie_trailer = self._movie_service.get_trailer(chosen_movie_name)
         if movie_trailer:
             self._update.effective_message.reply_text(
-                text=f'[{chosen_movie_name} - (Trailer)]({movie_trailer})',
+                text=f'Please hang on while I am bringing the trailer... ',
                 reply_to_message_id=self._update.message.message_id,
-                parse_mode=ParseMode.MARKDOWN,
                 reply_markup=ReplyKeyboardRemove()
             )
+            with VideoDownloader(movie_trailer) as file:
+                self.context.bot.send_video(
+                    chat_id=self.get_chat_id(),
+                    video=file,
+                    reply_to_message_id=self._update.message.message_id,
+                )
+
             next_stage = self.query_additional_movies()
         elif movie_trailer is None:
             self._update.effective_message.reply_text(
