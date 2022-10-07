@@ -2,7 +2,7 @@ import logging
 from abc import ABC
 from mr_knowledge_bot.bot.base_bot import BaseBot
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Updater, Filters, CallbackQueryHandler, ConversationHandler
-from telegram import Update, ParseMode
+from telegram import Update, ParseMode, ReplyKeyboardRemove
 from mr_knowledge_bot.bot.telegram.telegram_click.decorator import command
 from mr_knowledge_bot.bot.telegram.telegram_click.argument import Argument, Selection, Flag
 from mr_knowledge_bot.bot.conversations import MovieConversation, TVShowConversation
@@ -136,7 +136,7 @@ class TelegramBot(BaseBot, ABC):
         text = f'Hello {first_name} {last_name}! Here are the available conversations 😎' \
                f'\n\n{generate_command_list(update, context, summary=True)}\n\n' \
                f'For more information please refer to https://github.com/GuyAfik/MrKnowledgeBot/blob/master/README.md'
-        bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN)
+        bot.send_message(chat_id, text, parse_mode=ParseMode.MARKDOWN, reply_markup=ReplyKeyboardRemove())
 
     @command(
         name='find_movies_by_name',
