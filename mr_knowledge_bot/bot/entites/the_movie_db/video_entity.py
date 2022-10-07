@@ -14,7 +14,6 @@ class VideoEntity(TheMovieDBBaseEntity):
     @classmethod
     def from_response(cls, response):
         results = response.get('results') or []
-
         return [
             cls(
                 name=result.get('name'),
@@ -28,7 +27,7 @@ class VideoEntity(TheMovieDBBaseEntity):
         ]
 
     def __str__(self):
-        if self.type == 'trailer' and self.is_official and self.site == 'youtube':
+        if self.type in ('trailer', 'teaser') and self.site == 'youtube':
             return f'https://www.youtube.com/watch?v={self.key}'
         return ''
 

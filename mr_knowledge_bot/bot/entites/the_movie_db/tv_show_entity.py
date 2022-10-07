@@ -4,10 +4,22 @@ from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
 from mr_knowledge_bot.bot.entites.the_movie_db.tv_show_season_entity import TVShowSeasonEntity
 from mr_knowledge_bot.utils import is_english_letters_movie
 
+
 class TheMovieDBTVShowEntity(TheMovieDBBaseEntity):
 
     def __init__(
-        self, _id, name, release_date, genres, overview, popularity, rating, status, seasons, number_of_episodes, homepage
+        self,
+        _id,
+        name,
+        release_date,
+        genres,
+        overview,
+        popularity,
+        rating,
+        status,
+        seasons,
+        number_of_episodes,
+        homepage
     ):
         super().__init__(_id, name)
         self.release_date = release_date

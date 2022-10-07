@@ -4,6 +4,7 @@ from mr_knowledge_bot.bot.entites.the_movie_db.genre_entity import GenreEntity
 import datetime
 from mr_knowledge_bot.utils import is_english_letters_movie
 
+
 class TheMovieDBMovieEntity(TheMovieDBBaseEntity):
 
     def __init__(self, _id, name, release_date, genres, overview, popularity, rating, homepage, status, runtime):
