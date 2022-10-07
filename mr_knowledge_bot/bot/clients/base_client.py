@@ -62,7 +62,6 @@ def parse_http_response(
             if response_type == 'class':
                 return _class_type.from_response(http_response.json())
             elif response_type == 'json':
-                print(http_response.json())
                 return dict_get_nested_fields(dictionary=http_response.json(), keys=keys)
             else:  # in case the entire response object is needed
                 return http_response
