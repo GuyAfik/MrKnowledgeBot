@@ -93,7 +93,8 @@ class TelegramTVShowConversation(Conversation, ABC):
     def yes_or_no_tv_show_details(self):
         self._context.bot.send_message(
             chat_id=self.get_chat_id(),
-            text='Would you like to get a general information about one of the tv-shows 🎬?',
+            text='Would you like to get a general information about one of the tv-shows 🎬? '
+                 'write "exit" to leave the conversation at any point of time.',
             reply_markup=self.get_yes_or_no_keyboard()
         )
 
